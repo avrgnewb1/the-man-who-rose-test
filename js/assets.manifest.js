@@ -55,6 +55,7 @@ window.ASSET_FILES = {
   "azriel_adult/at_window.webp",
   "azriel_adult/eyes_open.webp",
   "azriel_adult/getting_ready.webp",
+  "azriel_adult/in_driver_seat.webp",
   "azriel_adult/looking_out_at_the_street.webp",
   "azriel_adult/sitting_up.webp",
   "azriel_adult/still.webp",
@@ -220,6 +221,12 @@ window.ASSET_FILES = {
   "ui_text_advance.ogg",
   "wave_roll_in_soft_01.mp3",
   "wave_roll_in_soft_01.ogg"
+ ],
+ "voice": [
+  "devon_hook_walk_away.mp3",
+  "devon_hook_walk_away.ogg",
+  "devon_leave_without_you.mp3",
+  "devon_leave_without_you.ogg"
  ],
  "styleMasterMtime": null
 };

@@ -84,5 +84,16 @@ html,body{height:100%;overflow:hidden;position:fixed;inset:0}
 }
 /* posed sprite with a masked-off base (e.g. Herc's car hood): soft fade, no hard edge */
 .sprite.posed.cut img{-webkit-mask-image:linear-gradient(to top,transparent calc(var(--cut) * 100%),#000 calc(var(--cut) * 100% + 4%));mask-image:linear-gradient(to top,transparent calc(var(--cut) * 100%),#000 calc(var(--cut) * 100% + 4%))}
+/* Part 2 [FLASHBACK] (Sage): warm, desaturated sepia + soft vignette over bg, sprites and CG. Removed with a hard cut (no transition). */
+#game.flashback #bg,#game.flashback #sprites,#game.flashback #cg{filter:sepia(.55) saturate(.6) brightness(1.03) contrast(.95)}
+#game::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:0;background:radial-gradient(ellipse at 50% 45%,transparent 52%,rgba(60,35,15,.55) 100%),rgba(255,190,120,.08)}
+#game.flashback::after{opacity:1}
+/* Echo line (Sage): soft italic, faded DEVIN label, brief reverb-like ghosting of the text box */
+#textbox.echo .dialogue__text{font-style:italic;opacity:.88}
+#textbox.echo #name{opacity:.45}
+#textbox.echo #text{animation:vn-echo 1.6s ease-out both}
+@keyframes vn-echo{0%{opacity:0;filter:blur(3px);text-shadow:6px 0 6px rgba(255,255,255,.5),-6px 0 6px rgba(255,255,255,.35)}45%{opacity:.75;filter:blur(1px);text-shadow:3px 0 4px rgba(255,255,255,.35),-3px 0 4px rgba(255,255,255,.25)}100%{opacity:1;filter:none;text-shadow:1px 0 3px rgba(255,255,255,.18)}}
+@media (prefers-reduced-motion:reduce){#textbox.echo #text{animation:none;text-shadow:1px 0 3px rgba(255,255,255,.18)}}
+#textbox,#sfx{z-index:3}
 
 #scene-jump{display:none!important} /* dev-only */

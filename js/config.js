@@ -2,7 +2,7 @@
 // Mappings are id -> filename; dirs below. Sprites default to sprites/<char>/<expr>.png (see EXPR_MOOD fallback).
 window.ASSETS = {
   // All art/audio resolves as dirs[kind] + filename. Mappings below are id -> filename only; rename here if artists rename.
-  dirs: { bg: "assets/bg/", cg: "assets/cg/", sprites: "assets/sprites/", sprites_v3: "assets/sprites_v3/", music: "assets/music/", music_later: "assets/music_later/", sfx: "assets/sfx/" },
+  dirs: { bg: "assets/bg/", cg: "assets/cg/", sprites: "assets/sprites/", sprites_v3: "assets/sprites_v3/", music: "assets/music/", music_later: "assets/music_later/", sfx: "assets/sfx/", voice: "assets/voice/" },
   styleMaster: null,
   showPlaceholderLabels: false, // preview/dist: no dev labels or silhouettes, solid colour only
   bg: { // draft bg_id -> Atlas file in art/bg (Robert's alias map, Oct 12 23:34). An exact bg_<draftid>.* always wins.
@@ -13,12 +13,23 @@ window.ASSETS = {
     uncle_fred_house: "bg_fred_house_front_day.png",
     uncle_fred_house_day: "bg_fred_house_front_day.png",
     car_interior_dusk: "bg_car_interior_dusk.png",
-    brick_house_living_room_day: "bg_house_living_room_day.png",   // Pops and the Ocean; its other bgs have no art yet -> solid colour
+    brick_house_living_room_day: "bg_house_living_room_day.png",
+    // Part 2 drive-past: no art yet -> closest approved bgs (Robert, Oct 31). Past/present house share ONE framing (Atlas note), tinted apart.
+    devins_house_day_past: "bg_neils_street_day.png",          // "just up the road from Neil": same street, bright day (+ flashback sepia)
+    road_past_devins_house_rain: "bg_neils_street_day.png",    // SAME framing as the flashback bg, cold rain tint below
+    devins_room_night_past: "bg_boys_room_night.png",          // nearest room-at-night art; red tint for the "low warm red light"
+    apartment_stairwell_rain: "bg_azriel_window.png",          // nearest rainy interior; cold tint
+    office_lobby_rain: "bg_burger_place_booth.png",            // nearest public interior; cold tint   // Pops and the Ocean; its other bgs have no art yet -> solid colour
     // exact files now used (Atlas, 23:35): bg_brick_house_living_room_dusk, _side_yard_noon/_afternoon/_sunset, bg_burger_place_booth,
     // bg_car_interior_day, bg_uncle_fred_house_backyard_afternoon. bg_desert_highway_dusk is NOT car_interior_day.
   },
   bgTint: { // CSS overlay applied over mapped/stand-in bgs (not over an exact bg_<draftid> file)
     brick_house_side_yard_morning: "linear-gradient(rgba(255,225,170,.18),rgba(160,190,220,.12))",
+    devins_house_day_past: "linear-gradient(rgba(255,230,170,.12),rgba(255,210,150,.08))",
+    road_past_devins_house_rain: "linear-gradient(rgba(40,55,75,.55),rgba(20,28,40,.6))",
+    devins_room_night_past: "linear-gradient(rgba(150,20,20,.38),rgba(60,10,15,.45))",
+    apartment_stairwell_rain: "linear-gradient(rgba(40,55,75,.45),rgba(20,28,40,.5))",
+    office_lobby_rain: "linear-gradient(rgba(50,65,85,.45),rgba(25,32,45,.5))",
   },
   bgFallbackDir: "",         // tries <dir><id>.jpg / .png / .webp before placeholder
   sprites: {
@@ -87,10 +98,12 @@ window.FLAG_MAP = {
   // Part 2 — confirmed by Nova (flag-map.md Part 2 section)
   p2wake: { A: { keeps_moving: 1 }, B: { sits_with_it: 1 } },
   p2neil: { A: { dreams_out_loud: 1 }, B: { builds_step_by_step: 1 } },
+  // Part 2 Scene 3 — PROVISIONAL (draft says "proposed ... Nova to confirm")
+  p2drive: { A: { faces_the_loss: 1 }, B: { looks_away: 1 } },
   boulders: { A: { lets_in_grandpa: 1 }, B: { fred_bond: 1 }, C: { carries_it_for_others: 1 } },
 };
 window.FLAGS_INIT = { lets_in_grandpa: 0, masks_with_jokes: 0, fred_bond: 0, carries_it_for_others: 0, lets_in_dad: 0,
-  keeps_moving: 0, sits_with_it: 0, dreams_out_loud: 0, builds_step_by_step: 0 };   // Part 2 flags (saved with the rest of st.flags)
+  keeps_moving: 0, sits_with_it: 0, dreams_out_loud: 0, builds_step_by_step: 0, faces_the_loss: 0, looks_away: 0 };   // Part 2 flags (saved with the rest of st.flags)
 // Speaker label -> sprite character id (to dim non-speakers)
 window.SPEAKER_SPRITE = { AZRIEL: "azriel", GRANDPA: "grandpa_eddie", MOM: "mom", "UNCLE FRED": "uncle_fred",
   ZEKE: "zeke", NEIL: "neil", LACY: "lacy", DEVIN: "devon", MICHAEL: "michael", "BIG KID": "big_kid", VIC: "vic", DAD: "dad", POPS: "dad" };
@@ -112,6 +125,7 @@ window.UI_COPY = {
     dirtpile: { A: "Step in front of Neil. \"Hey. Let's just show him the ramp.\"", B: "Stand right next to Neil, shoulder to shoulder." },
     dadbeach: { A: "\"Okay. Let go. I trust you.\"", B: "Grab his arm tight. \"Not yet! One more minute!\"" },  // from the draft (not in ui-copy.md yet)
     p2wake: { A: "Get up. Feet on the cold floor. Go make the shift.", B: "Lie there one more minute and listen to the rain." },   // from drafts
+    p2drive: { A: "Look at the house as you pass.", B: "Keep your eyes on the road." },
     p2neil: { A: "Say the big dream out loud, even if it sounds crazy.", B: "Keep it simple: \"First step. Then the next one.\"" },
     boulders: { A: "\"They're Grandpa's!\"", B: "\"They're Uncle Fred's. They're in his yard.\"", C: "\"You should share. One each. Forever.\"" },
   },
@@ -161,6 +175,9 @@ window.MUSIC = {
     p2neil: [{ track: "devons_theme_loop", gain: 0.6, fadeIn: 3 },          // "low, steady" (the drive)
              { track: "devons_theme_loop", gain: 0.85 },                    // "lifts, warmer" (same loop, lifted, no restart)
              { track: "rising_theme_loop", gain: 0.9, fadeIn: 3 }],         // "warm, hopeful" (the hopeful turn)
+    p2drive: [{ track: "devons_theme_loop", gain: 0.55, fadeIn: 4 },     // "slow minor-key keys, fading in"
+              { track: "devons_theme_loop", gain: 0.3, fadeIn: 4 },     // "the slow keys again, very faint"
+              { track: null, fadeOut: 3 }],                              // "the keys stop"
   },
   // background-triggered cues: "<scene>:<bg_id>"
   bgCues: {
@@ -208,7 +225,7 @@ window.BG_SOLID = { black: "#000", boys_room_night: "#1b1f33", freeway_arizona: 
   dream_beach_haze: "#e9e4d6", dream_porch_dusk: "#5a4a52", azriel_bedroom_morning: "#4a5058", azriel_window: "#5d646c", azriel_apartment_kitchen_morning: "#555b62",
   car_interior_rain: "#3e454d", neils_street_day: "#8e8a80", neils_yard_day: "#857f72", neils_street_afternoon: "#77746d" };
 // Sprites with no art yet: plain silhouette, never a label, never another character's art (e.g. adult Azriel must not fall back to the kid set).
-window.SPRITE_SILHOUETTE = [];   // Part 2 adults + Herc now have Mira's art (SPRITE_POSES below)
+window.SPRITE_SILHOUETTE = ["devin_adult", "michael_adult"]  /* no art yet: placeholder, never the kid sprites */;   // Part 2 adults + Herc now have Mira's art (SPRITE_POSES below)
 // Part 2 lightning CG (Theo/Charlie approved Oct 30). Fired by the op [CG: porch_storm_flash] in drafts/part2-opening-wake.md:23,
 // under the CSS white flash. Never use cg_ch1_porch_storm_flash_base.jpg.
 window.CGS.push({ id: "pops_ocean_swim", scene: "dadbeach", file: "cg_pops_ocean_swim_v7.jpg",   // Theo v7 (1280x720): the swim lesson
@@ -225,8 +242,10 @@ window.UI_SFX = {
  "save_confirm": "ui_save_confirm.ogg",
  "load_confirm": "ui_load_confirm.ogg"
 };
-window.AUDIO_DEFAULTS = { music: 0.7, sfx: 0.8, ui: 0.35, mute: false };
-window.FLAGS_PROVISIONAL = [];   // none: Nova confirmed all Part 2 flags (Oct 30)
+window.AUDIO_DEFAULTS = { music: 0.7, sfx: 0.8, ui: 0.35, voice: 1, mute: false };
+// VOICE: real recordings of a real person. Never looped, never overlapped, never truncated (only stopped on scene change / restart / load).
+window.VOICE = { duckDb: -10, duckIn: 0.4, duckOut: 1.5 };
+window.FLAGS_PROVISIONAL = ["faces_the_loss", "looks_away"];   // p2drive, awaiting Nova;   // none: Nova confirmed all Part 2 flags (Oct 30)
 // Asset-id aliases: drafts say devin_age7, but the brother's asset files/ids use "Devon" (art/sprites/devon/). On screen he stays "Devin".
 window.SPRITE_ID_ALIAS = { devin: "devon" };
 
@@ -254,6 +273,7 @@ window.SPRITE_POSES = { dadbeach: {
   p2neil: { azriel_adult: { getting_ready: "getting_ready.png", looking_out_at_the_street: "looking_out_at_the_street.png" },
     neil_adult: { surprised_grin: "surprised_grin.png", easy_grin: "easy_grin.png", porch_rail: "porch_rail.png", serious_nod: "serious_nod.png", grin_slow: "grin_slow.png", approving: "approving.png" },
     hercules: { barreling_in: "barreling_in.png", on_car_hood: "on_car_hood.png", free: "shaking_off.png" } },
+  p2drive: { azriel_adult: { in_driver_seat: "in_driver_seat.png" } },
 };
 // Size normalization (tools/sprite_norm.py -> js/sprite_norm.js): each pose's alpha bounding box is measured; `axis`/`span` say how much
 // of the character's full standing height that box spans, so every pose is drawn at the same pixels-per-character-height.
@@ -269,6 +289,7 @@ window.POSE_SPAN = {
   "azriel_adult/eyes_open": { axis: "h", span: 0.55, lift: 0.5 },   // lying in bed, foreshortened
   "azriel_adult/still": { axis: "h", span: 0.55, lift: 0.5 },       // lying in bed
   "azriel_adult/sitting_up": { axis: "h", span: 0.74 },             // seated on the bed edge (bed included)
+  "azriel_adult/in_driver_seat": { axis: "h", span: 0.72 },        // seated at the wheel (seat included), same scale as sitting_up
   "hercules/on_car_hood": { axis: "h", span: 1.57, cut: 0.2, lift: 0.45 },   // lifted so he sits above the textbox; hood edge stays masked
   "hercules/barreling_in": { axis: "h", span: 1.0, lift: 0.35 },   // dog is short: lift clear of the textbox
   "hercules/shaking_off": { axis: "h", span: 1.0, lift: 0.35 },      // sitting (~1.25x standing) + hood; hood (bottom 20%) is masked off and sunk below the frame

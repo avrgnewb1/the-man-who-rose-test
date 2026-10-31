@@ -524,5 +524,20 @@ window.SPRITE_NORM = {
    405,
    447
   ]
+ },
+ "azriel_adult/in_driver_seat": {
+  "h": 0.7214,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   1,
+   404,
+   516
+  ],
+  "size": [
+   404,
+   516
+  ]
  }
 };

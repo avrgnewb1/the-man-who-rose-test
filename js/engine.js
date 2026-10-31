@@ -160,7 +160,9 @@ function unlockAudio() {
   if (!audio.ctx && AC) { audio.ctx = new AC(); audio.ctxCount++; audio.out = audio.ctx.createGain(); audio.out.connect(audio.ctx.destination);
     // buses: master = music, sfxBus = scene SFX/ambience, uiBus = UI clicks; all through out (mute)
     audio.master = audio.ctx.createGain(); audio.sfxBus = audio.ctx.createGain(); audio.uiBus = audio.ctx.createGain();
-    [audio.master, audio.sfxBus, audio.uiBus].forEach(g => g.connect(audio.out)); applyVol(); }
+    // voice: music runs master -> duck -> out so a VOICE line can pull the music down without touching the user's music volume
+    audio.duck = audio.ctx.createGain(); audio.voiceBus = audio.ctx.createGain(); audio.master.connect(audio.duck); audio.duck.connect(audio.out);
+    [audio.sfxBus, audio.uiBus, audio.voiceBus].forEach(g => g.connect(audio.out)); applyVol(); }
   if (!audio.decks.length) audio.decks = [makeDeck(), makeDeck()];
   if (!audio.blessed) { audio.blessed = true; audio.decks.forEach(d => { if (d.name) return; d.el.src = silentUrl; const p = d.el.play(); p && p.then(() => { if (!d.name) d.el.pause(); }).catch(() => {}); }); }
   if (audio.ctx && audio.ctx.state !== "running") audio.ctx.resume().catch(() => {});
@@ -231,9 +233,9 @@ window.addEventListener("pageshow", () => { if (audio.ctx && audio.ctx.state !==
 // Volume / mute settings (Menu): music, sound effects, UI sounds, mute all. Saved in localStorage.
 const vol = { ...(window.AUDIO_DEFAULTS || { music: 0.7, sfx: 0.8, ui: 0.35, mute: false }), ...JSON.parse(localStorage.getItem("tmwr_vol") || "{}") };
 function applyVol() { const set = (g, v) => g && (g.gain.value = v);
-  set(audio.out, vol.mute ? 0 : 1); set(audio.master, vol.music); set(audio.sfxBus, vol.sfx); set(audio.uiBus, vol.ui);
+  set(audio.out, vol.mute ? 0 : 1); set(audio.master, vol.music); set(audio.sfxBus, vol.sfx); set(audio.uiBus, vol.ui); set(audio.voiceBus, vol.voice ?? 1);
   if (!audio.ctx) audio.decks.forEach(d => d.el.volume = vol.mute ? 0 : Math.min(d.el.volume, vol.music)); }
-[["#m-vol", "music"], ["#m-sfx", "sfx"], ["#m-ui", "ui"]].forEach(([id, k]) => { const el = $(id); if (!el) return; el.value = vol[k];
+[["#m-vol", "music"], ["#m-sfx", "sfx"], ["#m-ui", "ui"], ["#m-voice", "voice"]].forEach(([id, k]) => { const el = $(id); if (!el) return; el.value = vol[k];
   el.oninput = e => { vol[k] = +e.target.value; applyVol(); localStorage.setItem("tmwr_vol", JSON.stringify(vol)); }; });
 $("#m-mute") && ($("#m-mute").checked = vol.mute, $("#m-mute").onchange = e => { vol.mute = e.target.checked; applyVol(); localStorage.setItem("tmwr_vol", JSON.stringify(vol)); });
 // UI sounds: tiny one-shots, decoded once, never block anything; silently skipped if a file is missing.
@@ -276,7 +278,27 @@ window.__SFX = sfxActive;
 function sfxCaption(desc) { sfxPlay(desc); const el = $("#sfx"); el.hidden = false; el.textContent = "🔊 " + desc; el.style.opacity = 1; clearTimeout(el._t); el._t = setTimeout(() => el.style.opacity = 0, 3500); }
 
 // ---------- runner ----------
-function sceneStart() { warmSceneMusic(st.scene); if (audio.ctx) stopSfx("all", 0.5); st.stack = [{ i: 0 }]; st.sprites = []; st.musicTag = 0; setCg(null, true); renderSprites(); title();
+// ---- VOICE (real recordings): queued one after another (never overlap), never looped, never cut short;
+// stopVoice() is only called on a scene change, a restart/load or returning to the title.
+audio.voiceGen = 0; audio.voiceQ = Promise.resolve(); audio.voiceBufs = {}; audio.voiceLog = []; audio.voiceNow = null;
+const voiceUrl = id => { const order = canOgg ? ["ogg", "mp3"] : ["mp3", "ogg"]; for (const x of order) if (has("voice", id + "." + x)) return D.voice + id + "." + x; return null; };
+function voiceBuf(id) { if (audio.voiceBufs[id]) return audio.voiceBufs[id]; const u = voiceUrl(id); if (!u || !audio.ctx) return Promise.resolve(null);
+  return audio.voiceBufs[id] = fetch(u).then(r => r.ok ? r.arrayBuffer() : null).then(b => b && new Promise((ok, no) => audio.ctx.decodeAudioData(b, ok, no))).catch(() => (delete audio.voiceBufs[id], null)); }
+function warmVoices(i) { const sc = S[i]; if (!sc || !audio.ctx) return; const w = ops => ops.forEach(o => { if (o.op === "voice") voiceBuf(o.id); if (o.options) o.options.forEach(x => w(x.ops)); }); w(sc.ops); }
+function duckMusic(on) { if (!audio.duck) return; const V = window.VOICE || {}, g = audio.duck.gain, t = audio.ctx.currentTime;
+  g.cancelScheduledValues(t); g.setValueAtTime(g.value, t);
+  g.linearRampToValueAtTime(on ? Math.pow(10, (V.duckDb ?? -10) / 20) : 1, t + (on ? V.duckIn ?? 0.4 : V.duckOut ?? 1.5)); }
+function voicePlay(id) { const gen = audio.voiceGen, want = performance.now(); if (!audio.ctx) return;
+  audio.voiceQ = audio.voiceQ.then(async () => { const buf = await voiceBuf(id); if (gen !== audio.voiceGen) return;
+    if (!buf) { audio.voiceLog.push({ id, want, error: "missing" }); return; }
+    if (audio.ctx.state === "suspended") await audio.ctx.resume().catch(() => {});
+    duckMusic(true); const src = audio.ctx.createBufferSource(); src.buffer = buf; src.loop = false; src.connect(audio.voiceBus);
+    const rec = { id, want, start: performance.now(), dur: buf.duration }; audio.voiceLog.push(rec); audio.voiceNow = { src, rec };
+    await new Promise(done => { src.onended = done; src.start(); audio.voiceStop = done; });
+    rec.end = performance.now(); audio.voiceNow = null; if (gen === audio.voiceGen) duckMusic(false); }); }
+function stopVoice() { audio.voiceGen++; const v = audio.voiceNow; if (v) { v.rec.stopped = true; try { v.src.onended = null; v.src.stop(); } catch (e) {} audio.voiceNow = null; audio.voiceStop && audio.voiceStop(); }
+  audio.voiceQ = Promise.resolve(); if (audio.duck) duckMusic(false); }
+function sceneStart() { stopVoice(); warmVoices(st.scene); warmSceneMusic(st.scene); if (audio.ctx) stopSfx("all", 0.5); st.stack = [{ i: 0 }]; st.sprites = []; st.musicTag = 0; st.flashback = false; st.hardCut = false; applyFlashback(); setCg(null, true); renderSprites(); title();
   musicCue(M.sceneStart[sid()]); }
 // Walk forward (without mutating state) to the next line/choice and collect every image it will need.
 function lookahead() { const urls = []; let scene = st.scene, stack = st.stack.map(f => ({ ...f }));
@@ -332,9 +354,11 @@ function runStep() {
       case "bg": { const G = window.BG_GROUP || {}, g = id => G[id] || id;
         if (st.bg && g(st.bg.id) !== g(op.id) && audio.ctx) stopSfx("here", 1.2); }   // VN2-T03: loops AND one-shots of the old location
         if (st.cgOp) { st.cgOp = false; setCg(null); }
-        st.sprites = []; renderSprites(); setBg(op.id, op.desc, holdBlack); musicCue((M.bgCues || {})[sid() + ":" + op.id]); f.i++; break;
+        st.sprites = []; renderSprites(); { const cut = st.hardCut; st.hardCut = false; const pb = setBg(op.id, op.desc, holdBlack || cut); if (cut) pb.then(applyFlashback); } musicCue((M.bgCues || {})[sid() + ":" + op.id]); f.i++; break;
       case "sprite": setSprite(op.id, op.desc); f.i++; break;
       case "sfx": sfxCaption(op.desc); f.i++; break;
+      case "voice": voicePlay(op.id); f.i++; break;
+      case "flashback": st.flashback = !!op.on; if (op.on) applyFlashback(); else st.hardCut = true;   /* tint drops in the same frame as the new bg */ f.i++; break;   // Sage: sepia+vignette; hard cut back
       case "music": { const tags = M.tags[sid()] || []; musicCue(tags[st.musicTag++]); f.i++; break; }
       case "fade": { f.i++; busy = true; $("#textbox").hidden = true; $("#sfx").hidden = true; setCg(null); if (audio.ctx) stopSfx("all", 0.7);
         artIdle = preloadAll(sceneImages(st.scene + 1).slice(0, 4));   // next bg(s) load while the screen goes black
@@ -342,7 +366,7 @@ function runStep() {
         $("#fade").classList.add("on");
         // stay black: the next bg/sprites/CG are decoded and applied UNDER the black, then reveal() fades in
         setTimeout(() => { busy = false; holdBlack = true; step(); }, 750); return; }
-      case "say": f.i++; cgCheck(op.text, holdBlack); lineCue(op.text); show(op.who, op.text); reveal(); return;
+      case "say": f.i++; cgCheck(op.text, holdBlack); lineCue(op.text); show(op.who, op.text, op.style); reveal(); return;
       case "choice": showChoice(op, f.i); reveal(); return;
       case "cond": { const o = op.options.find(o => (st.flags[o.key] || 0) > 0); if (o) st.stack.push({ ci: f.i, key: o.key, i: 0 }); else f.i++; break; }
       case "cg": { const c = window.CGS.find(c => c.id === op.id && resolve("cg", c.file)); if (c) { setCg(c, true); st.cgOp = true; } f.i++; break; }
@@ -361,7 +385,9 @@ function flash(on) { const el = $("#flash"); if (!el) return;
   else { requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add("out"); el.classList.remove("on"); })); } }
 function toast(text) { const el = $("#sfx"); el.hidden = false; el.textContent = text; el.style.opacity = 1; clearTimeout(el._t); el._t = setTimeout(() => el.style.opacity = 0, 3500); }
 function title() { /* scene name kept in state for Log; Juno's layout has no top bar */ }
-function show(who, text) {
+function applyFlashback() { $("#game").classList.toggle("flashback", !!(st && st.flashback)); }
+function show(who, text, style) {
+  $("#textbox").classList.remove("echo"); if (style === "echo") { void $("#textbox").offsetWidth; $("#textbox").classList.add("echo"); }
   st.speaker = who === "NARRATION" ? null : who;
   $("#textbox").classList.toggle("narration", who === "NARRATION");
   $("#name").textContent = U.names[who] ?? (who.charAt(0) + who.slice(1).toLowerCase());
@@ -389,6 +415,7 @@ function endChapter() { playTrack(null, { fadeOut: M.endFade ?? 6 }); if (audio.
 async function start(scene = 0, saved) {
   if (busy) return; busy = true;
   $("#fade").classList.add("on", "now"); holdBlack = true;            // instant black cover (opaque night colour, not white)
+  stopVoice();
   st = saved || fresh(scene); st.flags = { ...window.FLAGS_INIT, ...st.flags };   // older saves get the new (Part 2) flags at 0 log = []; window.__VN_DONE = false;
   $("#textbox").hidden = true; $("#choices").hidden = true; $("#end").hidden = true; setCg(null, true); $("#btn-choice-menu").hidden = true;
   const card = !saved && (scene === 0 || S[scene].part !== S[scene - 1].part);
@@ -398,7 +425,7 @@ async function start(scene = 0, saved) {
     if (st.bg) setBg(st.bg.id, st.bg.desc, true); renderSprites(); setCg(window.CGS.find(c => c.id === st.cg), true); playTrack(st.track ?? null, st.trackOpts || {});
     const top = st.stack[st.stack.length - 1], ops = opsAt(st.stack.length - 1); if (top.i > 0 && ops[top.i - 1]?.op === "say") top.i--; }
   else if (!card) musicCue(M.sceneStart[S[scene].id] ?? null);
-  st.sprites = st.sprites || []; renderSprites(); warmNextScene();
+  st.sprites = st.sprites || []; applyFlashback(); renderSprites(); warmNextScene();
   if (card) { const prep = preloadAll([...lookahead(), ...sceneImages(scene)]); artIdle = prep; busy = false; return chapterCard(prep); }
   busy = false; step();
 }
@@ -438,7 +465,7 @@ $("#btn-start").textContent = U.menu.begin; $("#btn-continue").textContent = U.m
 const sel = $("#scene-jump"); sel.innerHTML = `<option value="">Scene select (dev)…</option>` + S.map((s, i) => `<option value="${i}">${i + 1}. ${s.title}</option>`).join("");
 sel.onchange = () => sel.value !== "" && start(+sel.value);
 const open = id => { $(id).hidden = false; uiSfx("menu_open"); };
-const toTitle = () => { document.querySelectorAll(".overlay").forEach(o => o.hidden = true); $("#title").hidden = false; $("#btn-choice-menu").hidden = true;
+const toTitle = () => { stopVoice(); $("#game").classList.remove("flashback"); document.querySelectorAll(".overlay").forEach(o => o.hidden = true); $("#title").hidden = false; $("#btn-choice-menu").hidden = true;
   requestAnimationFrame(() => { $("#end").hidden = true; $("#textbox").hidden = true; setCg(null, true); });
   $("#btn-continue").hidden = !localStorage.getItem("tmwr_save"); musicCue(M.title); };
 // Dev jump: ?part=2 (or ?scene=<id>) makes Begin start there. Part 2 flags start at 0 (Ch1 flags too).

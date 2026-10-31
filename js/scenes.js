@@ -3421,5 +3421,469 @@ window.SCENES = [
     "op": "fade"
    }
   ]
+ },
+ {
+  "id": "p2drive",
+  "title": "The Drive Past",
+  "part": 2,
+  "source": "drafts/part2-the-drive-past.md",
+  "ops": [
+   {
+    "op": "bg",
+    "id": "neils_street_afternoon",
+    "desc": "overcast, dry dirt, low gray clouds"
+   },
+   {
+    "op": "sfx",
+    "desc": "car door; keys; wind"
+   },
+   {
+    "op": "sprite",
+    "id": "azriel_adult",
+    "desc": "in_driver_seat"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "I got in the car. Still cloudy. Always cloudy."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Neil's house in the mirror. Herc on the porch, watching me go."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Something more. I kept turning it over."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Devin used to talk like that too."
+   },
+   {
+    "op": "sfx",
+    "desc": "engine idling"
+   },
+   {
+    "op": "music",
+    "desc": "slow minor-key keys, fading in"
+   },
+   {
+    "op": "flashback",
+    "on": true
+   },
+   {
+    "op": "bg",
+    "id": "devins_house_day_past",
+    "desc": "FULL OF LIFE: bright day, a lot of cars out front, well kept and shining; house fresh; music coming from inside; the cemetery right there beside it. SAME framing as the present BG."
+   },
+   {
+    "op": "sfx",
+    "desc": "music drifting from the house; laughter"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Devin lived just up the road from Neil."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Mid-twenties, all of us. I'd go over there all the time."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "You knew his place by the cars. A lot of cars out front."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "And the cemetery right there next to it."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "We never thought about it much back then."
+   },
+   {
+    "op": "bg",
+    "id": "devins_room_night_past",
+    "desc": "low warm red light, a white keyboard"
+   },
+   {
+    "op": "sfx",
+    "desc": "slow minor-key keys"
+   },
+   {
+    "op": "sprite",
+    "id": "devin_adult",
+    "desc": "at_keyboard, eyes_down",
+    "note": "(slim; dark wide-brim cowboy hat; short sides; dark maroon tee; small stud earring; small \"DST\" tattoo by his right eye)"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Devin at the keyboard. Red light. Eyes down. Slow keys."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Calm. Like the music was something he was listening to,"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "not something he was making."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Hard to believe he was the lion. The fighter."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Strong-willed. And always loving too."
+   },
+   {
+    "op": "sprite",
+    "id": "michael_adult",
+    "desc": "on_the_couch, notebook"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Michael on the couch with a notebook, writing bars."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Same face. Serious, like always."
+   },
+   {
+    "op": "say",
+    "who": "MICHAEL",
+    "text": "Run that back, D. Slower."
+   },
+   {
+    "op": "say",
+    "who": "DEVIN",
+    "text": "[not looking up] It's already slow, bro."
+   },
+   {
+    "op": "say",
+    "who": "MICHAEL",
+    "text": "Slower."
+   },
+   {
+    "op": "sfx",
+    "desc": "the keys loop again, slower"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "We made music. We hung out. We talked about the future."
+   },
+   {
+    "op": "voice",
+    "id": "devon_hook_walk_away",
+    "desc": "Devin's real recording"
+   },
+   {
+    "op": "say",
+    "who": "DEVIN",
+    "text": "[low at the keyboard, on the hook] When I walk away, you don't"
+   },
+   {
+    "op": "say",
+    "who": "DEVIN",
+    "text": "hear me say I can't / 'Cause I can"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "He could rap. Both of them could. Devin, though."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Devin could make a room go quiet."
+   },
+   {
+    "op": "say",
+    "who": "AZRIEL",
+    "text": "Y'all are gonna be big. For real."
+   },
+   {
+    "op": "say",
+    "who": "DEVIN",
+    "text": "We're ALL gonna be big. That's the plan."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "We made plans. Big ones. Same as with Neil today."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "I caught myself looking at the little letters by his eye."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "DST. He saw me looking and grinned."
+   },
+   {
+    "op": "say",
+    "who": "DEVIN",
+    "text": "What?"
+   },
+   {
+    "op": "say",
+    "who": "AZRIEL",
+    "text": "Nothing, man. Play it again."
+   },
+   {
+    "op": "sfx",
+    "desc": "keys, warm, slowing"
+   },
+   {
+    "op": "flashback",
+    "on": false
+   },
+   {
+    "op": "sfx",
+    "desc": "keys cut; a single drop on the windshield"
+   },
+   {
+    "op": "bg",
+    "id": "car_interior_day",
+    "desc": "overcast"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Then a drop hit the windshield. Then another."
+   },
+   {
+    "op": "sfx",
+    "desc": "rain starting, building fast"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "And the rain came back, like it was waiting for me."
+   },
+   {
+    "op": "sfx",
+    "desc": "wipers on"
+   },
+   {
+    "op": "bg",
+    "id": "car_interior_rain",
+    "desc": "delivery app on the phone mount"
+   },
+   {
+    "op": "sfx",
+    "desc": "phone ping"
+   },
+   {
+    "op": "ui",
+    "desc": "phone — \"New order. 3 stops.\""
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Delivery shift. Rainy City, wet as ever."
+   },
+   {
+    "op": "bg",
+    "id": "apartment_stairwell_rain",
+    "desc": ""
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Stop one. Third floor, no elevator. Bag held under my jacket."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "I can run a whole crew. I've done it."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Today I'm making sure somebody's noodles stay dry."
+   },
+   {
+    "op": "bg",
+    "id": "office_lobby_rain",
+    "desc": ""
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Stop two. A guy didn't look up from his phone to take it."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "CDL in my wallet. Code I never finished on my laptop."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Something more, Neil said. Something more, I said."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Rain kept saying the same thing on the roof."
+   },
+   {
+    "op": "bg",
+    "id": "car_interior_rain",
+    "desc": ""
+   },
+   {
+    "op": "sfx",
+    "desc": "ping; wipers"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Stop three. The app turned me back up the old road."
+   },
+   {
+    "op": "bg",
+    "id": "road_past_devins_house_rain",
+    "desc": "SAME framing as the flashback BG: the same cars, still there but worn and faded; the house a little run down; quiet, no music; the cemetery beside it, gray in the rain."
+   },
+   {
+    "op": "sfx",
+    "desc": "rain heavy; tires on wet road; wipers"
+   },
+   {
+    "op": "music",
+    "desc": "the slow keys again, very faint"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Devin's house. The cars still out front."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Everything a little run down now. Quiet."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "The cemetery right there. Same as it always was."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "Michael's probably in there."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "I could stop. Knock. Just talk to him."
+   },
+   {
+    "op": "sfx",
+    "desc": "engine dropping; the car slowing"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "I slowed down."
+   },
+   {
+    "op": "sfx",
+    "desc": "Devin's voice, faint, only in Azriel's head"
+   },
+   {
+    "op": "voice",
+    "id": "devon_leave_without_you",
+    "desc": "Devin's real recording"
+   },
+   {
+    "op": "say",
+    "who": "DEVIN",
+    "style": "echo",
+    "text": "I hope I leave you proud, 'cause I know I'ma leave without you / Damn, wish I didn't have to leave without you"
+   },
+   {
+    "op": "choice",
+    "options": [
+     {
+      "key": "A",
+      "text": "Look at the house as you pass.",
+      "ops": [
+       {
+        "op": "say",
+        "who": "NARRATION",
+        "text": "I looked. The window by the door. A light on inside."
+       },
+       {
+        "op": "say",
+        "who": "NARRATION",
+        "text": "For a second I swear I could hear the keys."
+       }
+      ]
+     },
+     {
+      "key": "B",
+      "text": "Keep your eyes on the road.",
+      "ops": [
+       {
+        "op": "say",
+        "who": "NARRATION",
+        "text": "I kept my eyes on the road. Wipers. Lines. Rain."
+       },
+       {
+        "op": "say",
+        "who": "NARRATION",
+        "text": "I didn't have to look. I knew exactly what was there."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "op": "sfx",
+    "desc": "the car not stopping; tires on wet road"
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "I didn't stop."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "The house got smaller in the mirror."
+   },
+   {
+    "op": "say",
+    "who": "NARRATION",
+    "text": "The rain didn't let up."
+   },
+   {
+    "op": "music",
+    "desc": "the keys stop"
+   },
+   {
+    "op": "fade"
+   }
+  ]
  }
 ];
