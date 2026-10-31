@@ -1,0 +1,77 @@
+/* Engine-only layer on top of Juno's ui/ui.css (tokens + components). */
+#game{position:fixed;inset:0;user-select:none;-webkit-tap-highlight-color:transparent}
+#bg .ph{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:var(--fs-small);opacity:.5;text-align:center;max-width:80%}
+#sprites{position:absolute;inset:8% 0 0;display:flex;justify-content:center;align-items:flex-end;gap:4%;pointer-events:none}
+.sprite{height:78%;max-width:42%;aspect-ratio:2/5;display:flex;align-items:flex-end;transition:filter .3s}
+.sprite.dim{filter:brightness(.55)}.sprite svg,.sprite img{height:100%;width:100%;object-fit:contain}
+#cg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fi var(--t-fade) var(--ease)}
+#cg[hidden],[hidden]{display:none!important}
+#game > .scrim{pointer-events:none}
+#fade{position:absolute;inset:0;background:var(--c-night);opacity:0;pointer-events:none;transition:opacity .7s}#fade.on{opacity:1}
+#sfx{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;max-width:70%;font-size:var(--fs-small);font-style:italic;color:var(--c-text-dim);text-shadow:0 1px 6px #000;transition:opacity .6s}
+#textbox{cursor:pointer;max-height:40vh;overflow:auto}
+.dialogue__name:empty{display:none}
+#textbox.narration #text{font-style:italic;color:var(--c-text-dim)}#text i{opacity:.75}
+.choices{z-index:3}
+.title-screen{position:absolute;inset:0;z-index:5;background:var(--c-night)}
+#keyart{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.title-screen.has-art h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} /* key art carries the logo */
+.title-screen:not(.has-art){background:none}
+.title select{font:var(--fs-small) var(--f-body);min-height:var(--touch);border-radius:var(--radius);background:rgba(20,18,28,.72);color:var(--c-text);border:1px solid var(--c-panel-border);padding:0 12px}
+.chapter{z-index:6;animation:fi var(--t-fade) var(--ease)}#end{background:rgba(20,18,28,.85)}
+.overlay{position:absolute;inset:0;z-index:10;background:rgba(20,18,28,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:var(--pad);text-align:center;overflow:auto}
+.overlay h2{font:600 clamp(28px,4vw,40px) var(--f-display);margin:0}
+.overlay p{max-width:52ch;font-size:var(--fs-small);line-height:var(--lh-body);margin:0}
+.overlay .btn{min-width:220px}
+#log-body{max-width:var(--measure);text-align:left;font-size:var(--fs-small);line-height:var(--lh-body);max-height:65vh;overflow:auto}
+pre{font:var(--fs-small)/1.4 ui-monospace,monospace;text-align:left}
+.vol{font-size:var(--fs-small);display:flex;gap:10px;align-items:center;min-height:var(--touch)}
+@keyframes fi{from{opacity:0}}
+@media (max-width:600px){#sprites{top:12%}.sprite{height:58%}.dialogue__controls .btn{padding:8px 12px}}
+#bg{position:absolute;inset:0}
+#textbox{overflow:visible;max-height:none}
+@media (max-aspect-ratio:1/1){#keyart{object-fit:contain;object-position:50% 8%}}
+
+/* ---- Transition/compositing fixes (Oct 30) ---- */
+html,body,#game{background:#14121c;overscroll-behavior:none}
+html,body{height:100%;overflow:hidden;position:fixed;inset:0}
+/* ui.css .stage uses 100vw/100vh: on iOS that is the *large* viewport -> bottom hidden under the toolbar, jumps when it shows/hides */
+#game{width:auto;height:auto;inset:0}
+#bg{position:absolute;inset:0;background:#14121c;overflow:hidden}
+.bg-layer{position:absolute;inset:0;opacity:0;transition:opacity .4s ease;will-change:opacity;transform:translateZ(0)}
+.bg-layer.on{opacity:1}.bg-layer.now{transition:none}
+.bg-layer img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bg-layer .bg-tint{position:absolute;inset:0}
+#cg{opacity:0;transition:opacity .4s ease;will-change:opacity;transform:translateZ(0);animation:none;background:#14121c}
+#cg.on{opacity:1}
+#fade{z-index:4;will-change:opacity;transform:translateZ(0);transition:opacity .7s ease}
+#fade.now{transition:none}
+#fade.on{pointer-events:auto}
+.sprite img{transition:none}
+/* chapter card: opaque, fades OUT only (no fade-in that reveals whatever is under it) */
+#chapter{background:#14121c;animation:none;transition:opacity .4s ease;will-change:opacity;z-index:7}
+#chapter.out{opacity:0}
+#chapter > *{animation:fi .5s ease both}
+/* title: hide the menu until the key art is decoded */
+.title-screen{z-index:8}
+.title-screen.loading .title{visibility:hidden}
+/* dialogue: no transform centering + no backdrop-filter (iOS layer flicker over cross-fading layers) */
+.dialogue{transform:none;left:0;right:0;margin:0 auto;backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,18,28,.92)}
+@media (prefers-reduced-motion:reduce){.bg-layer,#cg,#fade,#chapter{transition:none!important}}
+#keyart{opacity:0;transition:opacity .6s ease}#keyart.on{opacity:1}
+/* title: art + menu appear together once the key art is decoded */
+.title-screen .title{opacity:0;transition:opacity .5s ease}.title-screen.ready .title{opacity:1}
+#sfx[hidden]{display:none}
+/* Part 2 lightning: white flash over the stage (below the fade/black) */
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+#flash.on{opacity:1;transition:none}#flash.out{opacity:0;transition:opacity .7s ease-out}
+@media (prefers-reduced-motion:reduce){#flash.on{opacity:.55}#flash.out{transition-duration:1.2s}}
+/* v3 posed sprites: height from --s (character height x pose normalisation), width from the image */
+.sprite.posed{height:calc(78% * var(--s,1) * var(--fit,1));aspect-ratio:auto;max-width:none}
+.sprite.posed img{width:auto;height:100%;max-width:none;transform:translateY(calc(var(--oy,0) * 100%))}
+@media (max-width:600px){.sprite.posed{height:calc(58% * var(--s,1) * var(--fit,1))}}
+/* Menu button while a choice is showing: top-right, clear of the choice buttons, big enough to tap, above the choices */
+.choice-menu{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:4;min-width:44px;min-height:44px;touch-action:manipulation}
+.choice-menu[hidden]{display:none}
+
+#scene-jump{display:none!important} /* dev-only */
