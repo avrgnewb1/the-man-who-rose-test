@@ -541,17 +541,17 @@ window.SPRITE_NORM = {
   ]
  },
  "devon_adult/devon_at_keyboard_eyes_down": {
-  "h": 0.8014,
-  "oy": -0.3483,
+  "h": 0.8,
+  "oy": -0.35,
   "cut": 0,
   "bbox": [
    0,
    0,
-   355,
-   584
+   354,
+   585
   ],
   "size": [
-   355,
+   354,
    585
   ]
  },
@@ -637,11 +637,11 @@ window.SPRITE_NORM = {
   "bbox": [
    0,
    0,
-   503,
+   502,
    500
   ],
   "size": [
-   503,
+   502,
    500
   ]
  },
