@@ -45,7 +45,8 @@ function bgPlaceholder(id, desc) { const p = id + " " + desc, g =
   /dusk|sunset|orange/.test(p) ? ["#2a2238","#c8794a"] : /night|storm|monsoon/.test(p) ? ["#2a2238","#14121c"] :
   /morning/.test(p) ? ["#e3c79a","#8a98a8"] : /noon|day|afternoon/.test(p) ? ["#8fb8d8","#c8a878"] : ["#6b4a6e","#2b1d18"];
   return `linear-gradient(180deg,${g[0]},${g[1]})`; }
-const bgUrl = (id, desc) => bgCandidates(id, desc)[0] || null;
+const bgUrl = (id, desc, scene) => { const u = bgCandidates(id, desc)[0] || null, f = (window.BG_FORBID || {})[scene ?? (st && S[st.scene] && S[st.scene].id)];
+  if (u && f && new RegExp(f).test(u)) { console.error(`bg ${id} resolved to forbidden ${u}`); return null; } return u; };
 let bgSeq = 0;
 async function setBg(id, desc, instant) {
   st.bg = { id, desc }; const my = ++bgSeq, el = $("#bg"), url = bgUrl(id, desc);
@@ -84,7 +85,8 @@ const spriteUrl = (id, expr, scene) => spriteCandidates(id, expr, scene)[0] || n
 // Posed (v3) sprites: drawn at CHAR_HEIGHT x the alpha-bbox normalisation from js/sprite_norm.js, so every pose has the same scale.
 function posed(d, ch, url) { const m = url && url.match(/sprites_v3\/([^/]+\/[^/.]+)\.[a-z0-9]+$/i), n = m && (window.SPRITE_NORM || {})[m[1]];
   d.classList.toggle("posed", !!n); if (!n) { d.style.removeProperty("--s"); d.style.removeProperty("--oy"); return; }
-  d.style.setProperty("--s", ((window.CHAR_HEIGHT || {})[ch] ?? 1) * n.h); d.style.setProperty("--oy", n.oy); }
+  d.style.setProperty("--s", ((window.CHAR_HEIGHT || {})[ch] ?? 1) * n.h); d.style.setProperty("--oy", n.oy);
+  d.classList.toggle("cut", !!n.cut); d.style.setProperty("--cut", n.cut || 0); }
 function renderSprites() { const box = $("#sprites"), keep = new Set();
   st.sprites.forEach((s, idx) => { const ch = charOf(s.id), url = spriteUrl(s.id, s.expr), key = url || "sil:" + ch + ":" + s.expr; keep.add(ch);
     let d = box.querySelector(`.sprite[data-ch="${ch}"]`);
@@ -109,7 +111,7 @@ function fitSprites() { const box = $("#sprites"); box.style.setProperty("--fit"
   if (tot + gaps > W) box.style.setProperty("--fit", Math.max(0.4, (W - gaps) / tot).toFixed(3)); }
 addEventListener("resize", () => st && fitSprites());
 function dim() { const sp = st.speaker && window.SPEAKER_SPRITE[st.speaker];
-  document.querySelectorAll(".sprite").forEach(d => d.classList.toggle("dim", !!sp && d.dataset.ch !== sp)); }
+  document.querySelectorAll(".sprite").forEach(d => d.classList.toggle("dim", !!sp && d.dataset.ch !== sp && d.dataset.ch !== sp + "_adult")); }
 function setSprite(id, expr) { const ch = charOf(id); st.sprites = st.sprites.filter(s => charOf(s.id) !== ch);
   st.sprites.push({ id, expr: (expr || "neutral").split(",")[0].trim() }); if (st.sprites.length > 3) st.sprites.shift(); renderSprites(); }
 let cgSeq = 0;
@@ -146,7 +148,7 @@ const silentUrl = (() => { const n = 800, b = new ArrayBuffer(44 + n * 2), v = n
   v.setUint32(24, 8000, true); v.setUint32(28, 16000, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, n * 2, true);
   return URL.createObjectURL(new Blob([b], { type: "audio/wav" })); })();
 function trackUrl(name) { const order = canOgg ? ["ogg", "mp3"] : ["mp3", "ogg"];
-  for (const x of order) if (has("music", name + "." + x)) return D.music + name + "." + x; return null; }
+  for (const k of ["music", "music_later"]) for (const x of order) if (has(k, name + "." + x)) return D[k] + name + "." + x; return null; }
 function makeDeck() { const el = new Audio(); el.preload = "none"; el.loop = true; el.crossOrigin = "anonymous"; el.setAttribute("playsinline", "");
   const d = { el, name: null, gain: null, target: 0, tok: 0 };
   el.addEventListener("error", () => { if (d.name) audio.status[d.name] = "error " + (el.error && el.error.code); });
@@ -177,12 +179,25 @@ let artIdle = Promise.resolve();   // resolves when the art currently being prep
 let musicChain = Promise.resolve();
 function playTrack(name, opts = {}) {
   if (opts === true) opts = {};
+  // T08/VN2-T02: a repeat request for the cue that is already pending (e.g. every tap re-running unlockAudio) must not supersede it
+  if (name && audio.pending === name) return musicChain;
   audio.want = name; audio.wantOpts = opts; if (st) { st.track = name; st.trackOpts = opts; }
-  const my = ++audio.seq;
+  audio.pending = name;
+  const my = ++audio.seq; (audio.cueLog ||= []).push({ name, want: Math.round(performance.now()) });
   musicChain = musicChain.then(() => doPlay(name, opts, my)).catch(e => { audio.status.lastError = String(e); });
   return musicChain;
 }
-async function doPlay(name, opts, my) {
+// VN2-T02/T08: fetch the tracks this scene (and the next scene's opener) can cue, low priority, after the art, so a cue starts from cache.
+const warmed = new Set();
+function warmTrack(name) { const u = name && trackUrl(name); if (!u || warmed.has(u)) return; warmed.add(u);
+  artIdle.then(() => fetch(u, { priority: "low" }).then(r => r.ok && r.arrayBuffer()).catch(() => warmed.delete(u))); }
+const cueTrack = c => !c ? null : typeof c === "string" ? c : c.track;
+function warmSceneMusic(i) { const sc = S[i]; if (!sc) return; const id = sc.id;
+  [M.sceneStart[id], ...(M.tags[id] || []), ...Object.entries(M.bgCues || {}).filter(([k]) => k.startsWith(id + ":")).map(([, c]) => c),
+   ...(M.lineCues || []).filter(c => c.scene === id)].map(cueTrack).forEach(warmTrack);
+  if (S[i + 1]) warmTrack(cueTrack(M.sceneStart[S[i + 1].id])); }
+async function doPlay(name, opts, my) { try { return await doPlay1(name, opts, my); } finally { if (my === audio.seq) audio.pending = null; } }
+async function doPlay1(name, opts, my) {
   if (my !== audio.seq || !audio.decks.length) return;                // superseded, or not unlocked yet (unlockAudio replays want)
   const gain = opts.gain ?? 1, fadeIn = opts.fadeIn ?? M.fadeIn ?? M.crossfade, fadeOut = opts.fadeOut ?? (name ? M.crossfade : M.stopFade);
   const old = audio.cur;
@@ -190,7 +205,7 @@ async function doPlay(name, opts, my) {
   if (old) { rampTo(old, 0, fadeOut); const tok = ++old.tok; old.name = null;
     setTimeout(() => { if (old.tok === tok && audio.cur !== old) old.el.pause(); }, fadeOut * 1000 + 150); audio.cur = null; }
   if (!name) return;
-  await artIdle;                                                        // art first, then music
+  await Promise.race([artIdle, new Promise(r => setTimeout(r, 1200))]);   // art first, but never hold a cue more than 1.2 s (3G: VN2-T02)
   if (my !== audio.seq) return;
   const url = trackUrl(name); if (!url) { audio.status[name] = "missing"; return; }
   const d = audio.decks.find(x => x !== old) || audio.decks[0];
@@ -205,6 +220,7 @@ async function doPlay(name, opts, my) {
       await new Promise(r => setTimeout(r, 250)); }
   }
   if (my !== audio.seq || d.tok !== tok) { if (d.tok === tok) d.el.pause(); return; }
+  { const c = (audio.cueLog || []).findLast(c => c.name === name && !c.start); if (c) c.start = Math.round(performance.now()); }
   audio.cur = d; rampTo(d, gain, fadeIn); audio.starts.push(name); audio.status[name] = "playing";
 }
 function musicCue(c) { if (c === undefined) return; if (c === null || typeof c === "string") return playTrack(c);
@@ -246,10 +262,13 @@ function sfxPlay(desc) {
     const src = audio.ctx.createBufferSource(), g = audio.ctx.createGain(); src.buffer = buf; src.loop = loop;
     if (loop && /\.mp3$/.test(url)) src.loopStart = 1105 / 44100;      // MP3 encoder delay (Echo's note)
     src.connect(g).connect(audio.sfxBus); g.gain.value = 1; src.start();
-    const h = { url, src, g, loop, stopping: false }; sfxActive.add(h); src.onended = () => sfxActive.delete(h); });
+    const grp = loop && (window.SFX_EXCLUSIVE || []).find(gr => gr.some(f => url.includes(f.replace(/\.[a-z0-9]+$/, ""))));
+    if (grp) { const t = audio.ctx.currentTime; for (const o of sfxActive) if (o.loop && !o.stopping && o.url !== url && grp.some(f => o.url.includes(f.replace(/\.[a-z0-9]+$/, "")))) {
+      o.stopping = true; o.g.gain.setValueAtTime(o.g.gain.value, t); o.g.gain.linearRampToValueAtTime(0, t + 2); try { o.src.stop(t + 2.05); } catch (e) {} } }   // VN2-T04: one road bed at a time
+    const h = { url, src, g, loop, stopping: false, bg: st && st.bg && st.bg.id }; sfxActive.add(h); src.onended = () => sfxActive.delete(h); });
 }
 let sfxGen = 0;
-function stopSfx(which = "all", secs = 1.2) { if (which === "all") sfxGen++;
+function stopSfx(which = "all", secs = 1.2) { if (which === "all" || which === "here") sfxGen++;
   for (const h of [...sfxActive]) { if (h.stopping || (which === "loops" && !h.loop)) continue; h.stopping = true;
     const t = audio.ctx.currentTime; h.g.gain.cancelScheduledValues(t); h.g.gain.setValueAtTime(h.g.gain.value, t); h.g.gain.linearRampToValueAtTime(0, t + secs);
     try { h.src.stop(t + secs + 0.05); } catch (e) {} } }
@@ -257,7 +276,7 @@ window.__SFX = sfxActive;
 function sfxCaption(desc) { sfxPlay(desc); const el = $("#sfx"); el.hidden = false; el.textContent = "🔊 " + desc; el.style.opacity = 1; clearTimeout(el._t); el._t = setTimeout(() => el.style.opacity = 0, 3500); }
 
 // ---------- runner ----------
-function sceneStart() { if (audio.ctx) stopSfx("all", 0.5); st.stack = [{ i: 0 }]; st.sprites = []; st.musicTag = 0; setCg(null, true); renderSprites(); title();
+function sceneStart() { warmSceneMusic(st.scene); if (audio.ctx) stopSfx("all", 0.5); st.stack = [{ i: 0 }]; st.sprites = []; st.musicTag = 0; setCg(null, true); renderSprites(); title();
   musicCue(M.sceneStart[sid()]); }
 // Walk forward (without mutating state) to the next line/choice and collect every image it will need.
 function lookahead() { const urls = []; let scene = st.scene, stack = st.stack.map(f => ({ ...f }));
@@ -266,7 +285,7 @@ function lookahead() { const urls = []; let scene = st.scene, stack = st.stack.m
     const depth = stack.length - 1, ops = opsFor(scene, stack), f = stack[depth];
     if (f.i >= ops.length) { if (depth > 0) { stack.pop(); stack[stack.length - 1].i++; continue; } if (scene + 1 < S.length) { scene++; stack = [{ i: 0 }]; continue; } break; }
     const op = ops[f.i];
-    if (op.op === "bg") urls.push(bgUrl(op.id, op.desc));
+    if (op.op === "bg") urls.push(bgUrl(op.id, op.desc, S[scene].id));
     else if (op.op === "sprite") urls.push(spriteUrl(op.id, (op.desc || "neutral").split(",")[0].trim(), S[scene].id));
     else if (op.op === "say") { const c = window.CGS.find(c => c.scene === S[scene].id && [].concat(c.show).some(x => op.text.includes(x))); if (c) urls.push(resolve("cg", c.file)); break; }
     else if (op.op === "cond") { const o = op.options.find(o => (st.flags[o.key] || 0) > 0); if (o) { stack.push({ ci: f.i, key: o.key, i: 0 }); continue; } }
@@ -278,7 +297,7 @@ function lookahead() { const urls = []; let scene = st.scene, stack = st.stack.m
 }
 // Every image a scene can show (all branches): bgs, sprites, CGs.
 function sceneImages(i) { const sc = S[i]; if (!sc) return []; const u = [];
-  const walk = ops => ops.forEach(o => { if (o.op === "bg") u.push(bgUrl(o.id, o.desc)); if (o.op === "sprite") u.push(spriteUrl(o.id, (o.desc || "neutral").split(",")[0].trim(), sc.id));
+  const walk = ops => ops.forEach(o => { if (o.op === "bg") u.push(bgUrl(o.id, o.desc, sc.id)); if (o.op === "sprite") u.push(spriteUrl(o.id, (o.desc || "neutral").split(",")[0].trim(), sc.id));
     if (o.op === "choice" || o.op === "cond") o.options.forEach(x => walk(x.ops)); }); walk(sc.ops);
   window.CGS.filter(c => c.scene === sc.id).forEach(c => u.push(resolve("cg", c.file))); return [...new Set(u.filter(Boolean))]; }
 // Sequentially (one request at a time, after the current art) decode the next scene so fades never wait.
@@ -311,7 +330,7 @@ function runStep() {
     const op = ops[f.i];
     switch (op.op) {
       case "bg": { const G = window.BG_GROUP || {}, g = id => G[id] || id;
-        if (st.bg && g(st.bg.id) !== g(op.id) && audio.ctx) stopSfx("loops", 1.5); }
+        if (st.bg && g(st.bg.id) !== g(op.id) && audio.ctx) stopSfx("here", 1.2); }   // VN2-T03: loops AND one-shots of the old location
         if (st.cgOp) { st.cgOp = false; setCg(null); }
         st.sprites = []; renderSprites(); setBg(op.id, op.desc, holdBlack); musicCue((M.bgCues || {})[sid() + ":" + op.id]); f.i++; break;
       case "sprite": setSprite(op.id, op.desc); f.i++; break;
@@ -414,7 +433,7 @@ $("#btn-start").textContent = U.menu.begin; $("#btn-continue").textContent = U.m
 // Title: keep the menu hidden until the key art is decoded (max 2.5 s) so the art never pops in under the buttons.
 { const ka = resolve("cg", A.titleArt), ti = $("#title"); ti.classList.add("loading");
   const done = () => { ti.classList.remove("loading"); ti.classList.add("ready"); }; const tmo = setTimeout(done, 6000);
-  if (ka) loadImg(ka).then(im => { if (im) { const k = $("#keyart"); k.src = ka; k.alt = U.title; k.hidden = false; ti.classList.add("has-art"); requestAnimationFrame(() => k.classList.add("on")); }
+  if (ka) loadImg(ka).then(im => { warmTrack(cueTrack(M.title)); warmSceneMusic(0); if (im) { const k = $("#keyart"); k.src = ka; k.alt = U.title; k.hidden = false; ti.classList.add("has-art"); requestAnimationFrame(() => k.classList.add("on")); }
     requestAnimationFrame(() => { clearTimeout(tmo); done(); }); }); else { clearTimeout(tmo); done(); } }
 const sel = $("#scene-jump"); sel.innerHTML = `<option value="">Scene select (dev)…</option>` + S.map((s, i) => `<option value="${i}">${i + 1}. ${s.title}</option>`).join("");
 sel.onchange = () => sel.value !== "" && start(+sel.value);

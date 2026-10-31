@@ -73,5 +73,16 @@ html,body{height:100%;overflow:hidden;position:fixed;inset:0}
 /* Menu button while a choice is showing: top-right, clear of the choice buttons, big enough to tap, above the choices */
 .choice-menu{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:4;min-width:44px;min-height:44px;touch-action:manipulation}
 .choice-menu[hidden]{display:none}
+/* VN2-T05: short landscape phones (iPhone landscape ~390 px tall): compact textbox, clamped type, never more than ~40% of the screen */
+@media (orientation:landscape) and (max-height:500px){
+  .dialogue{max-height:40vh;max-height:40dvh;padding-top:20px;padding-bottom:6px;width:min(760px,calc(100% - 2*max(12px,env(safe-area-inset-left))))}
+  .dialogue__text{font-size:clamp(13px,3.6vh,16px);line-height:1.35;min-height:calc(2 * 1.35em)}
+  .dialogue__name{font-size:clamp(11px,3.2vh,14px);top:-12px}
+  .dialogue__controls{margin-top:2px}.dialogue__controls .btn{min-height:32px;padding:4px 10px;font-size:12px}
+  #sprites{top:4%}.sprite{height:86%}
+  .sfx,#sfx{font-size:11px}
+}
+/* posed sprite with a masked-off base (e.g. Herc's car hood): soft fade, no hard edge */
+.sprite.posed.cut img{-webkit-mask-image:linear-gradient(to top,transparent calc(var(--cut) * 100%),#000 calc(var(--cut) * 100% + 4%));mask-image:linear-gradient(to top,transparent calc(var(--cut) * 100%),#000 calc(var(--cut) * 100% + 4%))}
 
 #scene-jump{display:none!important} /* dev-only */

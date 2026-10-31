@@ -2,7 +2,7 @@
 // Mappings are id -> filename; dirs below. Sprites default to sprites/<char>/<expr>.png (see EXPR_MOOD fallback).
 window.ASSETS = {
   // All art/audio resolves as dirs[kind] + filename. Mappings below are id -> filename only; rename here if artists rename.
-  dirs: { bg: "assets/bg/", cg: "assets/cg/", sprites: "assets/sprites/", sprites_v3: "assets/sprites_v3/", music: "assets/music/", sfx: "assets/sfx/" },
+  dirs: { bg: "assets/bg/", cg: "assets/cg/", sprites: "assets/sprites/", sprites_v3: "assets/sprites_v3/", music: "assets/music/", music_later: "assets/music_later/", sfx: "assets/sfx/" },
   styleMaster: null,
   showPlaceholderLabels: false, // preview/dist: no dev labels or silhouettes, solid colour only
   bg: { // draft bg_id -> Atlas file in art/bg (Robert's alias map, Oct 12 23:34). An exact bg_<draftid>.* always wins.
@@ -155,11 +155,12 @@ window.MUSIC = {
     dadbeach: [null,                                                      // "none": night beat, ambience only
                { track: "summer_family_theme_loop", gain: 0.8 },          // "road-trip, warm and light" (no dedicated Pops cue in MUSIC_PLAN v2)
                { track: "summer_family_theme_loop", gain: 1 }],           // "bright, open" -> same loop, lifted (never restarts)
-    p2wake: [{ track: "summer_family_theme_loop", gain: 0.45, fadeIn: 3 }, // "the Ch1 warm theme, slowed and thinning" (quiet; no slowed edit exists)
+    // Part 2 (Lyra's music_later drafts; Devon's theme is the main Part 2 theme). Ch1 cues above are unchanged.
+    p2wake: [{ track: "summer_family_theme_loop", gain: 0.45, fadeIn: 3 }, // "the Ch1 warm theme, slowed and thinning" (the dream; draft asks for the Ch1 theme)
              { track: null, fadeOut: 0.25 }],                                // "cut" on the lightning
-    p2neil: [{ track: "dusk_drive_home_boulders_loop", gain: 0.55 },        // "low, steady"
-             { track: "summer_family_theme_loop", gain: 0.8 },              // "lifts, warmer"
-             { track: "summer_family_theme_loop", gain: 1 }],               // "warm, hopeful"
+    p2neil: [{ track: "devons_theme_loop", gain: 0.6, fadeIn: 3 },          // "low, steady" (the drive)
+             { track: "devons_theme_loop", gain: 0.85 },                    // "lifts, warmer" (same loop, lifted, no restart)
+             { track: "rising_theme_loop", gain: 0.9, fadeIn: 3 }],         // "warm, hopeful" (the hopeful turn)
   },
   // background-triggered cues: "<scene>:<bg_id>"
   bgCues: {
@@ -170,6 +171,12 @@ window.MUSIC = {
   // line-triggered cues (text match)
   lineCues: [
     { scene: "porch", at: "Remember that smell, okay, Bear?", track: "summer_family_theme_loop", gain: 0.5, fadeIn: 4 }, // ~-6 dB soft fade-in
+    // Part 2
+    { scene: "p2wake", at: "Thunder. Then rain. Morning in Rainy City.", track: "devons_theme_loop", gain: 0.6, fadeIn: 4 },
+    { scene: "p2wake", at: "Grandpa's gone. Pops is gone. Uncle Fred's gone.", track: "grief_reflection_theme_loop", gain: 0.8, fadeIn: 3 },
+    { scene: "p2wake", at: "Out the window, Rainy City was the same color as yesterday.", track: "devons_theme_loop", gain: 0.7, fadeIn: 3 },
+    { scene: "p2neil", at: "I don't know, man. I keep feeling like... this isn't it.", track: "grief_reflection_theme_loop", gain: 0.7, fadeIn: 3 },
+    { scene: "p2neil", at: "Something that matters. Something people remember.", track: "rising_theme_loop", gain: 0.85, fadeIn: 3 },   // dreams choice A
   ],
   fadeOutOnFade: { porch: 3 },                                            // summer fades out with the porch scene
 };
@@ -201,9 +208,11 @@ window.BG_SOLID = { black: "#000", boys_room_night: "#1b1f33", freeway_arizona: 
   dream_beach_haze: "#e9e4d6", dream_porch_dusk: "#5a4a52", azriel_bedroom_morning: "#4a5058", azriel_window: "#5d646c", azriel_apartment_kitchen_morning: "#555b62",
   car_interior_rain: "#3e454d", neils_street_day: "#8e8a80", neils_yard_day: "#857f72", neils_street_afternoon: "#77746d" };
 // Sprites with no art yet: plain silhouette, never a label, never another character's art (e.g. adult Azriel must not fall back to the kid set).
-window.SPRITE_SILHOUETTE = ["azriel_adult", "neil_adult", "hercules"];
+window.SPRITE_SILHOUETTE = [];   // Part 2 adults + Herc now have Mira's art (SPRITE_POSES below)
 // Part 2 lightning CG (Theo/Charlie approved Oct 30). Fired by the op [CG: porch_storm_flash] in drafts/part2-opening-wake.md:23,
 // under the CSS white flash. Never use cg_ch1_porch_storm_flash_base.jpg.
+window.CGS.push({ id: "pops_ocean_swim", scene: "dadbeach", file: "cg_pops_ocean_swim_v7.jpg",   // Theo v7 (1280x720): the swim lesson
+  show: "I got you, Bear. Kick your legs. Little kicks.", hide: "Azriel! Race me to the wave!" });
 window.CGS.push({ id: "porch_storm_flash", scene: "p2wake", file: "cg_ch2_porch_storm_flash_v1.jpg", op: true });
 // UI sounds (Echo). Quiet by default; volumes in Menu (saved in localStorage tmwr_vol).
 window.UI_SFX = {
@@ -224,6 +233,13 @@ window.SPRITE_ID_ALIAS = { devin: "devon" };
 // ---- Pops and the Ocean art (Oct 30, 9:48 PM) ----
 // Atlas bgs: exact bg_<id> files win automatically (boys_room_night, freeway_arizona_forest, freeway_california, whittier_aunt_house_day/_night,
 // beach_day/_afternoon/_late_afternoon). The draft uses one id, freeway_arizona, for two shots -> pick the file by the [BG] description.
+// Explicit Pops-and-the-Ocean bg map (Charlie saw the dirt yard in the swim lesson): every id pinned to Atlas's file; time of day per the draft
+// (swim lesson = [BG: beach_day] "bright sun"; play = beach_afternoon; sunburn = beach_late_afternoon).
+Object.assign(window.ASSETS.bg, { boys_room_night: "bg_boys_room_night.png", freeway_arizona_forest: "bg_freeway_arizona_forest.png", freeway_california: "bg_freeway_california.png",
+  whittier_aunt_house_day: "bg_whittier_aunt_house_day.png", whittier_aunt_house_night: "bg_whittier_aunt_house_night.png",
+  beach_day: "bg_beach_day.png", beach_afternoon: "bg_beach_afternoon.png", beach_late_afternoon: "bg_beach_late_afternoon.png" });
+// Guard: in these scenes a bg may never resolve to the dirt pile or a side-yard image (it falls to its solid colour and logs an error instead).
+window.BG_FORBID = { dadbeach: "dirt_pile|side_yard" };
 window.BG_BY_DESC = { freeway_arizona: [["dinosaur", "bg_freeway_arizona_dinosaurs.png"], ["factory", "bg_freeway_arizona_factory.png"]] };
 // Mira's v3 poses (art/sprites_v3/<char>/), scoped per scene so other scenes keep their sprites. draft expression tag -> pose file.
 window.SPRITE_POSES = { dadbeach: {
@@ -233,7 +249,12 @@ window.SPRITE_POSES = { dadbeach: {
   neil: { whisper: "whisper.png", splashing: "splashing.png" },
   vic: { on_his_back: "on_his_back_headphones.png", not_looking_up: "not_looking_up.png", on_a_board_in_the_shallows: "on_board.png" },
   lacy: { arms_crossed: "arms_crossed.png", burying_azriel: "burying_azriel.png" },
-} };
+},
+  p2wake: { azriel_adult: { eyes_open: "eyes_open.png", still: "still.png", sitting_up: "sitting_up.png", at_window: "at_window.png" } },
+  p2neil: { azriel_adult: { getting_ready: "getting_ready.png", looking_out_at_the_street: "looking_out_at_the_street.png" },
+    neil_adult: { surprised_grin: "surprised_grin.png", easy_grin: "easy_grin.png", porch_rail: "porch_rail.png", serious_nod: "serious_nod.png", grin_slow: "grin_slow.png", approving: "approving.png" },
+    hercules: { barreling_in: "barreling_in.png", on_car_hood: "on_car_hood.png", free: "shaking_off.png" } },
+};
 // Size normalization (tools/sprite_norm.py -> js/sprite_norm.js): each pose's alpha bounding box is measured; `axis`/`span` say how much
 // of the character's full standing height that box spans, so every pose is drawn at the same pixels-per-character-height.
 // Defaults: axis "h", span 1 (a standing figure). Hand-set only for non-standing poses. lift = raise by this fraction of the drawn height
@@ -243,7 +264,17 @@ window.POSE_SPAN = {
   "dad/asleep_on_towel": { axis: "w", span: 1.18, lift: 0.8 },       // lying down; towel is a bit longer than he is
   "vic/on_his_back_headphones": { axis: "w", span: 1.0, lift: 0.8 }, // lying in bed
   "vic/on_board": { axis: "h", span: 1.05 },              // standing on a board (board adds a little)
-  "lacy/burying_azriel": { axis: "h", span: 0.78, lift: 0.45 },       // kneeling over the sand mound
+  "lacy/burying_azriel": { axis: "h", span: 0.78, lift: 0.45 },
+  // Part 2. Dog: Herc's "character height" = his standing height (barreling_in).
+  "azriel_adult/eyes_open": { axis: "h", span: 0.55, lift: 0.5 },   // lying in bed, foreshortened
+  "azriel_adult/still": { axis: "h", span: 0.55, lift: 0.5 },       // lying in bed
+  "azriel_adult/sitting_up": { axis: "h", span: 0.74 },             // seated on the bed edge (bed included)
+  "hercules/on_car_hood": { axis: "h", span: 1.57, cut: 0.2, lift: 0.45 },   // lifted so he sits above the textbox; hood edge stays masked
+  "hercules/barreling_in": { axis: "h", span: 1.0, lift: 0.35 },   // dog is short: lift clear of the textbox
+  "hercules/shaking_off": { axis: "h", span: 1.0, lift: 0.35 },      // sitting (~1.25x standing) + hood; hood (bottom 20%) is masked off and sunk below the frame
+       // kneeling over the sand mound
 };
 // Relative character heights inside scenes that use SPRITE_POSES (adults 1.0). Ch1's other scenes are unchanged.
-window.CHAR_HEIGHT = { dad: 1.0, vic: 0.9, lacy: 0.78, neil: 0.74, azriel: 0.7 };
+window.CHAR_HEIGHT = { dad: 1.0, vic: 0.9, lacy: 0.78, neil: 0.74, azriel: 0.7, azriel_adult: 1.0, neil_adult: 0.97, hercules: 0.42 };
+// VN2-T04: beds that must never play together (starting one crossfades the other out over 2 s).
+window.SFX_EXCLUSIVE = [["car_freeway_seams_loop.ogg", "car_dusk_two_lane_loop.ogg"]];

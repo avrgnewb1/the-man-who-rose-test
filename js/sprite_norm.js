@@ -3,6 +3,7 @@ window.SPRITE_NORM = {
  "dad/uniform_off_duty": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -17,6 +18,7 @@ window.SPRITE_NORM = {
  "dad/warm_grin": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -31,6 +33,7 @@ window.SPRITE_NORM = {
  "dad/serious_soft": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -45,6 +48,7 @@ window.SPRITE_NORM = {
  "dad/in_the_water": {
   "h": 0.62,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -59,6 +63,7 @@ window.SPRITE_NORM = {
  "dad/asleep_on_towel": {
   "h": 0.4609,
   "oy": -0.8,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -73,6 +78,7 @@ window.SPRITE_NORM = {
  "dad/waking_very_red": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -87,6 +93,7 @@ window.SPRITE_NORM = {
  "dad/sunburnt_smile": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -101,6 +108,7 @@ window.SPRITE_NORM = {
  "azriel/eyes_shut_tight": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -115,6 +123,7 @@ window.SPRITE_NORM = {
  "azriel/huge_grin": {
   "h": 1.008,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    5,
@@ -129,6 +138,7 @@ window.SPRITE_NORM = {
  "azriel/awed": {
   "h": 1.0096,
   "oy": 0.0032,
+  "cut": 0,
   "bbox": [
    0,
    4,
@@ -143,6 +153,7 @@ window.SPRITE_NORM = {
  "azriel/amazed": {
   "h": 1.008,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    2,
    5,
@@ -157,6 +168,7 @@ window.SPRITE_NORM = {
  "azriel/guilty_grin": {
   "h": 1.0097,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    6,
@@ -171,6 +183,7 @@ window.SPRITE_NORM = {
  "azriel/sleepy_happy": {
   "h": 1.0097,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    2,
    6,
@@ -185,6 +198,7 @@ window.SPRITE_NORM = {
  "neil/whisper": {
   "h": 1.0119,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    17,
    8,
@@ -199,6 +213,7 @@ window.SPRITE_NORM = {
  "neil/splashing": {
   "h": 1.0103,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    7,
@@ -213,6 +228,7 @@ window.SPRITE_NORM = {
  "vic/on_his_back_headphones": {
   "h": 0.4506,
   "oy": -0.796,
+  "cut": 0,
   "bbox": [
    2,
    1,
@@ -227,6 +243,7 @@ window.SPRITE_NORM = {
  "vic/not_looking_up": {
   "h": 1.0064,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    0,
    4,
@@ -241,6 +258,7 @@ window.SPRITE_NORM = {
  "vic/on_board": {
   "h": 1.0517,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    2,
    1,
@@ -255,6 +273,7 @@ window.SPRITE_NORM = {
  "lacy/arms_crossed": {
   "h": 1.0,
   "oy": 0.0,
+  "cut": 0,
   "bbox": [
    3,
    0,
@@ -269,6 +288,7 @@ window.SPRITE_NORM = {
  "lacy/burying_azriel": {
   "h": 0.78,
   "oy": -0.45,
+  "cut": 0,
   "bbox": [
    0,
    0,
@@ -278,6 +298,231 @@ window.SPRITE_NORM = {
   "size": [
    618,
    480
+  ]
+ },
+ "azriel_adult/eyes_open": {
+  "h": 0.5515,
+  "oy": -0.5,
+  "cut": 0,
+  "bbox": [
+   0,
+   1,
+   441,
+   371
+  ],
+  "size": [
+   442,
+   371
+  ]
+ },
+ "azriel_adult/still": {
+  "h": 0.5515,
+  "oy": -0.5,
+  "cut": 0,
+  "bbox": [
+   0,
+   1,
+   332,
+   372
+  ],
+  "size": [
+   332,
+   372
+  ]
+ },
+ "azriel_adult/sitting_up": {
+  "h": 0.7415,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   1,
+   1,
+   346,
+   509
+  ],
+  "size": [
+   346,
+   509
+  ]
+ },
+ "azriel_adult/at_window": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   240,
+   690
+  ],
+  "size": [
+   240,
+   690
+  ]
+ },
+ "azriel_adult/getting_ready": {
+  "h": 1.0029,
+  "oy": 0.0015,
+  "cut": 0,
+  "bbox": [
+   0,
+   1,
+   302,
+   681
+  ],
+  "size": [
+   302,
+   682
+  ]
+ },
+ "azriel_adult/looking_out_at_the_street": {
+  "h": 1.0015,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   1,
+   1,
+   224,
+   687
+  ],
+  "size": [
+   225,
+   687
+  ]
+ },
+ "neil_adult/surprised_grin": {
+  "h": 1.0015,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   1,
+   1,
+   321,
+   679
+  ],
+  "size": [
+   321,
+   679
+  ]
+ },
+ "neil_adult/easy_grin": {
+  "h": 1.0029,
+  "oy": 0.0014,
+  "cut": 0,
+  "bbox": [
+   0,
+   1,
+   225,
+   691
+  ],
+  "size": [
+   225,
+   692
+  ]
+ },
+ "neil_adult/porch_rail": {
+  "h": 1.0015,
+  "oy": 0.0015,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   370,
+   666
+  ],
+  "size": [
+   371,
+   667
+  ]
+ },
+ "neil_adult/serious_nod": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   206,
+   695
+  ],
+  "size": [
+   206,
+   695
+  ]
+ },
+ "neil_adult/grin_slow": {
+  "h": 1.0014,
+  "oy": 0.0014,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   225,
+   695
+  ],
+  "size": [
+   226,
+   696
+  ]
+ },
+ "neil_adult/approving": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   231,
+   697
+  ],
+  "size": [
+   232,
+   697
+  ]
+ },
+ "hercules/barreling_in": {
+  "h": 1.0,
+  "oy": -0.35,
+  "cut": 0,
+  "bbox": [
+   1,
+   0,
+   338,
+   445
+  ],
+  "size": [
+   338,
+   445
+  ]
+ },
+ "hercules/on_car_hood": {
+  "h": 1.57,
+  "oy": -0.25,
+  "cut": 0.2,
+  "bbox": [
+   0,
+   0,
+   401,
+   520
+  ],
+  "size": [
+   401,
+   520
+  ]
+ },
+ "hercules/shaking_off": {
+  "h": 1.0045,
+  "oy": -0.3478,
+  "cut": 0,
+  "bbox": [
+   1,
+   1,
+   405,
+   446
+  ],
+  "size": [
+   405,
+   447
   ]
  }
 };
