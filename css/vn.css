@@ -95,5 +95,9 @@ html,body{height:100%;overflow:hidden;position:fixed;inset:0}
 @keyframes vn-echo{0%{opacity:0;filter:blur(3px);text-shadow:6px 0 6px rgba(255,255,255,.5),-6px 0 6px rgba(255,255,255,.35)}45%{opacity:.75;filter:blur(1px);text-shadow:3px 0 4px rgba(255,255,255,.35),-3px 0 4px rgba(255,255,255,.25)}100%{opacity:1;filter:none;text-shadow:1px 0 3px rgba(255,255,255,.18)}}
 @media (prefers-reduced-motion:reduce){#textbox.echo #text{animation:none;text-shadow:1px 0 3px rgba(255,255,255,.18)}}
 #textbox,#sfx{z-index:3}
+/* Echo speaker sprite: ghosted, only in Azriel's head */
+.sprite.echo{opacity:.5;filter:blur(.6px)}
+.sprite.echo img{animation:vn-echo 1.6s ease-out both}
+@media (prefers-reduced-motion:reduce){.sprite.echo img{animation:none}}
 
 #scene-jump{display:none!important} /* dev-only */

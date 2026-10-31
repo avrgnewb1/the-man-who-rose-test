@@ -309,7 +309,7 @@ function lookahead() { const urls = []; let scene = st.scene, stack = st.stack.m
     const op = ops[f.i];
     if (op.op === "bg") urls.push(bgUrl(op.id, op.desc, S[scene].id));
     else if (op.op === "sprite") urls.push(spriteUrl(op.id, (op.desc || "neutral").split(",")[0].trim(), S[scene].id));
-    else if (op.op === "say") { const c = window.CGS.find(c => c.scene === S[scene].id && [].concat(c.show).some(x => op.text.includes(x))); if (c) urls.push(resolve("cg", c.file)); break; }
+    else if (op.op === "say") { (window.LINE_POSE || []).forEach(([sc, t, id, e]) => { if (sc === S[scene].id && op.text.includes(t)) urls.push(spriteUrl(id, e, sc)); }); const c = window.CGS.find(c => c.scene === S[scene].id && [].concat(c.show).some(x => op.text.includes(x))); if (c) urls.push(resolve("cg", c.file)); break; }
     else if (op.op === "cond") { const o = op.options.find(o => (st.flags[o.key] || 0) > 0); if (o) { stack.push({ ci: f.i, key: o.key, i: 0 }); continue; } }
     else if (op.op === "cg") { const c = window.CGS.find(c => c.id === op.id); if (c) urls.push(resolve("cg", c.file)); }
     else if (op.op === "choice") { op.options.forEach(o => o.ops.slice(0, 6).forEach(x => { if (x.op === "sprite") urls.push(spriteUrl(x.id, x.desc.split(",")[0].trim(), S[scene].id)); if (x.op === "say") { const c = window.CGS.find(c => c.scene === S[scene].id && [].concat(c.show).some(y => x.text.includes(y))); if (c) urls.push(resolve("cg", c.file)); } })); break; }
@@ -366,7 +366,7 @@ function runStep() {
         $("#fade").classList.add("on");
         // stay black: the next bg/sprites/CG are decoded and applied UNDER the black, then reveal() fades in
         setTimeout(() => { busy = false; holdBlack = true; step(); }, 750); return; }
-      case "say": f.i++; cgCheck(op.text, holdBlack); lineCue(op.text); show(op.who, op.text, op.style); reveal(); return;
+      case "say": f.i++; (window.LINE_POSE || []).forEach(([sc, t, id, pose]) => { if (sc === sid() && op.text.includes(t)) setSprite(id, pose); }); cgCheck(op.text, holdBlack); lineCue(op.text); show(op.who, op.text, op.style); reveal(); return;
       case "choice": showChoice(op, f.i); reveal(); return;
       case "cond": { const o = op.options.find(o => (st.flags[o.key] || 0) > 0); if (o) st.stack.push({ ci: f.i, key: o.key, i: 0 }); else f.i++; break; }
       case "cg": { const c = window.CGS.find(c => c.id === op.id && resolve("cg", c.file)); if (c) { setCg(c, true); st.cgOp = true; } f.i++; break; }
@@ -387,6 +387,7 @@ function toast(text) { const el = $("#sfx"); el.hidden = false; el.textContent =
 function title() { /* scene name kept in state for Log; Juno's layout has no top bar */ }
 function applyFlashback() { $("#game").classList.toggle("flashback", !!(st && st.flashback)); }
 function show(who, text, style) {
+  document.querySelectorAll(".sprite.echo").forEach(d => d.classList.remove("echo")); if (style === "echo") { const sp = window.SPEAKER_SPRITE[who]; document.querySelectorAll(".sprite").forEach(d => (d.dataset.ch === sp || d.dataset.ch === sp + "_adult") && d.classList.add("echo")); }
   $("#textbox").classList.remove("echo"); if (style === "echo") { void $("#textbox").offsetWidth; $("#textbox").classList.add("echo"); }
   st.speaker = who === "NARRATION" ? null : who;
   $("#textbox").classList.toggle("narration", who === "NARRATION");

@@ -225,7 +225,7 @@ window.BG_SOLID = { black: "#000", boys_room_night: "#1b1f33", freeway_arizona: 
   dream_beach_haze: "#e9e4d6", dream_porch_dusk: "#5a4a52", azriel_bedroom_morning: "#4a5058", azriel_window: "#5d646c", azriel_apartment_kitchen_morning: "#555b62",
   car_interior_rain: "#3e454d", neils_street_day: "#8e8a80", neils_yard_day: "#857f72", neils_street_afternoon: "#77746d" };
 // Sprites with no art yet: plain silhouette, never a label, never another character's art (e.g. adult Azriel must not fall back to the kid set).
-window.SPRITE_SILHOUETTE = ["devin_adult", "michael_adult"]  /* no art yet: placeholder, never the kid sprites */;   // Part 2 adults + Herc now have Mira's art (SPRITE_POSES below)
+window.SPRITE_SILHOUETTE = []  /* adult twins have art now (Oct 31, Charlie via Robert); never the kid sprites */;   // Part 2 adults + Herc now have Mira's art (SPRITE_POSES below)
 // Part 2 lightning CG (Theo/Charlie approved Oct 30). Fired by the op [CG: porch_storm_flash] in drafts/part2-opening-wake.md:23,
 // under the CSS white flash. Never use cg_ch1_porch_storm_flash_base.jpg.
 window.CGS.push({ id: "pops_ocean_swim", scene: "dadbeach", file: "cg_pops_ocean_swim_v7.jpg",   // Theo v7 (1280x720): the swim lesson
@@ -247,7 +247,7 @@ window.AUDIO_DEFAULTS = { music: 0.7, sfx: 0.8, ui: 0.35, voice: 1, mute: false 
 window.VOICE = { duckDb: -10, duckIn: 0.4, duckOut: 1.5 };
 window.FLAGS_PROVISIONAL = ["faces_the_loss", "looks_away"];   // p2drive, awaiting Nova;   // none: Nova confirmed all Part 2 flags (Oct 30)
 // Asset-id aliases: drafts say devin_age7, but the brother's asset files/ids use "Devon" (art/sprites/devon/). On screen he stays "Devin".
-window.SPRITE_ID_ALIAS = { devin: "devon" };
+window.SPRITE_ID_ALIAS = { devin: "devon", devin_adult: "devon_adult", michael_adult: "michael_adult" };   // script tag -> art folder (on-screen names unchanged)
 
 // ---- Pops and the Ocean art (Oct 30, 9:48 PM) ----
 // Atlas bgs: exact bg_<id> files win automatically (boys_room_night, freeway_arizona_forest, freeway_california, whittier_aunt_house_day/_night,
@@ -273,7 +273,9 @@ window.SPRITE_POSES = { dadbeach: {
   p2neil: { azriel_adult: { getting_ready: "getting_ready.png", looking_out_at_the_street: "looking_out_at_the_street.png" },
     neil_adult: { surprised_grin: "surprised_grin.png", easy_grin: "easy_grin.png", porch_rail: "porch_rail.png", serious_nod: "serious_nod.png", grin_slow: "grin_slow.png", approving: "approving.png" },
     hercules: { barreling_in: "barreling_in.png", on_car_hood: "on_car_hood.png", free: "shaking_off.png" } },
-  p2drive: { azriel_adult: { in_driver_seat: "in_driver_seat.png" } },
+  p2drive: { azriel_adult: { in_driver_seat: "in_driver_seat.png" },
+    devon_adult: { at_keyboard: "devon_at_keyboard_eyes_down.png", neutral: "devon_neutral.png", happy: "devon_happy.png", easy_smile: "devon_easy_smile.png", thoughtful: "devon_thoughtful.png", sad: "devon_sad.png" },
+    michael_adult: { on_the_couch: "michael_adult_on_the_couch_notebook.png", neutral: "michael_adult_neutral.png" } },
 };
 // Size normalization (tools/sprite_norm.py -> js/sprite_norm.js): each pose's alpha bounding box is measured; `axis`/`span` say how much
 // of the character's full standing height that box spans, so every pose is drawn at the same pixels-per-character-height.
@@ -289,13 +291,24 @@ window.POSE_SPAN = {
   "azriel_adult/eyes_open": { axis: "h", span: 0.55, lift: 0.5 },   // lying in bed, foreshortened
   "azriel_adult/still": { axis: "h", span: 0.55, lift: 0.5 },       // lying in bed
   "azriel_adult/sitting_up": { axis: "h", span: 0.74 },             // seated on the bed edge (bed included)
-  "azriel_adult/in_driver_seat": { axis: "h", span: 0.72 },        // seated at the wheel (seat included), same scale as sitting_up
+  "azriel_adult/in_driver_seat": { axis: "h", span: 0.72 },
+  "devon_adult/devon_at_keyboard_eyes_down": { axis: "h", span: 0.8, lift: 0.35 },          // seated on a stool at the keys (stool + keyboard included)
+  "michael_adult/michael_adult_on_the_couch_notebook": { axis: "h", span: 0.74, lift: 0.4 }, // seated on the couch, cowboy hat (couch included)        // seated at the wheel (seat included), same scale as sitting_up
   "hercules/on_car_hood": { axis: "h", span: 1.57, cut: 0.2, lift: 0.45 },   // lifted so he sits above the textbox; hood edge stays masked
   "hercules/barreling_in": { axis: "h", span: 1.0, lift: 0.35 },   // dog is short: lift clear of the textbox
   "hercules/shaking_off": { axis: "h", span: 1.0, lift: 0.35 },      // sitting (~1.25x standing) + hood; hood (bottom 20%) is masked off and sunk below the frame
        // kneeling over the sand mound
 };
 // Relative character heights inside scenes that use SPRITE_POSES (adults 1.0). Ch1's other scenes are unchanged.
-window.CHAR_HEIGHT = { dad: 1.0, vic: 0.9, lacy: 0.78, neil: 0.74, azriel: 0.7, azriel_adult: 1.0, neil_adult: 0.97, hercules: 0.42 };
+window.CHAR_HEIGHT = { dad: 1.0, vic: 0.9, lacy: 0.78, neil: 0.74, azriel: 0.7, azriel_adult: 1.0, neil_adult: 0.97, devon_adult: 0.98, michael_adult: 0.98, hercules: 0.42 };
 // VN2-T04: beds that must never play together (starting one crossfades the other out over 2 s).
 window.SFX_EXCLUSIVE = [["car_freeway_seams_loop.ogg", "car_dusk_two_lane_loop.ogg"]];
+
+// Per-line pose changes (Part 2 drive-past): [scene, text fragment, sprite id, pose]. Applied just before the line shows.
+window.LINE_POSE = [
+  ["p2drive", "It's already slow, bro", "devin_adult", "at_keyboard"],
+  ["p2drive", "We're ALL gonna be big", "devin_adult", "happy"],
+  ["p2drive", "DST. He saw me looking and grinned", "devin_adult", "easy_smile"],
+  ["p2drive", "Nothing, man. Play it again", "devin_adult", "at_keyboard"],
+  ["p2drive", "I hope I leave you proud", "devin_adult", "thoughtful"],   // echo: faded, in Azriel's head
+];

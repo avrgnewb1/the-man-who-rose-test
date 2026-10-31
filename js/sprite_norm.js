@@ -539,5 +539,125 @@ window.SPRITE_NORM = {
    404,
    516
   ]
+ },
+ "devon_adult/devon_at_keyboard_eyes_down": {
+  "h": 0.8014,
+  "oy": -0.3483,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   355,
+   584
+  ],
+  "size": [
+   355,
+   585
+  ]
+ },
+ "devon_adult/devon_neutral": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   220,
+   690
+  ],
+  "size": [
+   220,
+   690
+  ]
+ },
+ "devon_adult/devon_happy": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   212,
+   695
+  ],
+  "size": [
+   213,
+   695
+  ]
+ },
+ "devon_adult/devon_easy_smile": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   218,
+   695
+  ],
+  "size": [
+   219,
+   695
+  ]
+ },
+ "devon_adult/devon_thoughtful": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   230,
+   686
+  ],
+  "size": [
+   230,
+   686
+  ]
+ },
+ "devon_adult/devon_sad": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   217,
+   682
+  ],
+  "size": [
+   218,
+   682
+  ]
+ },
+ "michael_adult/michael_adult_on_the_couch_notebook": {
+  "h": 0.74,
+  "oy": -0.4,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   503,
+   500
+  ],
+  "size": [
+   503,
+   500
+  ]
+ },
+ "michael_adult/michael_adult_neutral": {
+  "h": 1.0,
+  "oy": 0.0,
+  "cut": 0,
+  "bbox": [
+   0,
+   0,
+   215,
+   690
+  ],
+  "size": [
+   215,
+   690
+  ]
  }
 };
