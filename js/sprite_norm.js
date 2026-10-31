@@ -268,7 +268,7 @@ window.SPRITE_NORM = {
  },
  "lacy/burying_azriel": {
   "h": 0.78,
-  "oy": -0.25,
+  "oy": -0.45,
   "bbox": [
    0,
    0,

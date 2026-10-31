@@ -105,8 +105,8 @@ function renderSprites() { const box = $("#sprites"), keep = new Set();
 function fitSprites() { const box = $("#sprites"); box.style.setProperty("--fit", 1);
   if (!box.querySelector(".sprite.posed")) return;
   const W = box.clientWidth * 0.96, gap = parseFloat(getComputedStyle(box).columnGap) || 0;   // synchronous: no oversized frame
-  const tot = [...box.children].reduce((a, d) => a + d.getBoundingClientRect().width, 0) + gap * Math.max(0, box.children.length - 1);
-  if (tot > W) box.style.setProperty("--fit", (W / tot).toFixed(3)); }
+  const tot = [...box.children].reduce((a, d) => a + d.getBoundingClientRect().width, 0), gaps = gap * Math.max(0, box.children.length - 1);
+  if (tot + gaps > W) box.style.setProperty("--fit", Math.max(0.4, (W - gaps) / tot).toFixed(3)); }
 addEventListener("resize", () => st && fitSprites());
 function dim() { const sp = st.speaker && window.SPEAKER_SPRITE[st.speaker];
   document.querySelectorAll(".sprite").forEach(d => d.classList.toggle("dim", !!sp && d.dataset.ch !== sp)); }

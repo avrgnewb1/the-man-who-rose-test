@@ -243,7 +243,7 @@ window.POSE_SPAN = {
   "dad/asleep_on_towel": { axis: "w", span: 1.18, lift: 0.8 },       // lying down; towel is a bit longer than he is
   "vic/on_his_back_headphones": { axis: "w", span: 1.0, lift: 0.8 }, // lying in bed
   "vic/on_board": { axis: "h", span: 1.05 },              // standing on a board (board adds a little)
-  "lacy/burying_azriel": { axis: "h", span: 0.78, lift: 0.25 },       // kneeling over the sand mound
+  "lacy/burying_azriel": { axis: "h", span: 0.78, lift: 0.45 },       // kneeling over the sand mound
 };
 // Relative character heights inside scenes that use SPRITE_POSES (adults 1.0). Ch1's other scenes are unchanged.
 window.CHAR_HEIGHT = { dad: 1.0, vic: 0.9, lacy: 0.78, neil: 0.74, azriel: 0.7 };
