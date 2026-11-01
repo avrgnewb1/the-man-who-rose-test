@@ -39,3 +39,10 @@ body{overflow-y:auto}
 html.reduce-motion .wt-topbar{transition:none}
 /* keep the floating audio toggle from covering choice captions on phones */
 @media (max-width:759px){.wt-choice__options{padding-right:80px}}
+/* Cover / title panel (top of scroll) */
+.wt-cover{position:relative;margin:0 var(--wt-gutter);border:var(--line) solid var(--ink);min-height:min(78vh,620px);display:flex;align-items:center;justify-content:center;padding:28px 16px;
+  background:linear-gradient(180deg,var(--sky) 0 58%,var(--olive) 58% 70%,var(--sand) 70%)}
+.wt-cover::after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--tone) 1.1px,transparent 1.3px);background-size:6px 6px;pointer-events:none}
+.wt-cover__block{position:relative;z-index:1;text-align:center;padding:20px 22px 18px;max-width:100%}
+.wt-cover__title{font:400 clamp(36px,7vw,58px)/1.05 var(--f-display);margin:0}
+.wt-cover .tagline{white-space:nowrap;padding:6px 12px}

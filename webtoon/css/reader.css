@@ -28,3 +28,9 @@
 .wt-art{border:0}.wt-panel .wt-art img{width:100%;height:100%}.wt-panel .wt-art .wt-sprite{width:auto}
 .wt-text{padding-bottom:16px}.wt-menu__row .btn{min-width:56px;justify-content:center}.wt-menu__chapters{display:flex;flex-direction:column;gap:8px}
 .wt-audio-toggle--menu{position:static;min-height:48px}
+
+/* Mira manga busts: close-up when alone, face inset when sharing a panel (busts fade out at the bottom) */
+.wt-panel .wt-art .wt-closeup{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:auto;height:62%;max-width:90%;object-fit:contain;object-position:bottom}
+.wt-panel .wt-art .wt-face{position:absolute;top:3%;right:3%;width:30%;height:auto;aspect-ratio:1;object-fit:cover;object-position:top;background:#f4efe4;border:3px solid #16141a;box-shadow:3px 3px 0 #16141a}
+.wt-flashback .wt-closeup,.wt-flashback .wt-face{filter:sepia(.55) saturate(.6) brightness(1.03) contrast(.95)}
+.wt-panel .wt-art .wt-face ~ .wt-face{right:auto;left:3%}

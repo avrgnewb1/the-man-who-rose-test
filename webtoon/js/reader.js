@@ -109,8 +109,11 @@ function artBox(art, scene) {
   if (bu) add(bu, "wt-art__bg"); else box.style.background = (window.BG_SOLID || {})[art.bg?.id] || "#2a2733";
   const tint = art.bg && bu && bu !== resolve("bg", "bg_" + art.bg.id) && (A.bgTint || {})[art.bg.id]; if (tint) { const t = el("div", "wt-art__tint"); t.style.background = tint; box.append(t); }
   if (art.sprites.length) { const row = el("div", "wt-art__sprites"); box.append(row);
-    art.sprites.forEach(s => { const u = spriteUrl(s.id, s.expr, scene); if (!u) return; const ch = charOf(s.id), im = el("img", "wt-sprite"); im.alt = ""; im.dataset.src = u; im.decoding = "async";
-      const m = u.match(/sprites_v3\/([^/]+\/[^/.]+)\./), n = m && (window.SPRITE_NORM || {})[m[1]];
+    const MS = window.MANGA_SPRITES || { map: {}, norm: {} }, mangaOf = s => { const f = (MS.map[charOf(s.id)] || {})[s.expr]; return f && { u: f, n: MS.norm[f.replace(/^assets\/manga_chars\/|\.png$/g, "")] }; };
+    art.sprites.forEach(s => { const mg = !(((window.SPRITE_POSES || {})[scene] || {})[charOf(s.id)] || {})[s.expr] && mangaOf(s);
+      if (mg && mg.n.kind === "bust") { const im = el("img", art.sprites.length > 1 ? "wt-face" : "wt-closeup"); im.alt = ""; im.dataset.src = mg.u; im.decoding = "async"; im.dataset.char = charOf(s.id); box.append(im); return; }
+      const u = mg ? mg.u : spriteUrl(s.id, s.expr, scene); if (!u) return; const ch = charOf(s.id), im = el("img", "wt-sprite"); im.alt = ""; im.dataset.src = u; im.decoding = "async";
+      const m = u.match(/sprites_v3\/([^/]+\/[^/.]+)\./), n = mg ? mg.n : m && (window.SPRITE_NORM || {})[m[1]]; if (mg) im.dataset.manga = "1";
       const kid = /^(azriel|zeke|neil|lacy|devon|michael|big_kid)$/.test(ch), h = n ? 88 * ((window.CHAR_HEIGHT || {})[ch] ?? 1) * n.h : (kid ? 62 : 84);
       im.style.height = Math.min(h, 96) + "%"; im.style.maxWidth = (100 / art.sprites.length - 2) + "%"; if (n && n.oy) im.style.transform = `translateY(${n.oy * 100}%)`; row.append(im); }); }
   return box; }

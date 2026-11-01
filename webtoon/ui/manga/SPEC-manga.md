@@ -1,7 +1,7 @@
 # Manga UI restyle — TEST BUILD ONLY (Juno, Oct 31 2026)
 Board step 1 (Title and UI). Fallback/original UI untouched in ../ (ui.css, SPEC.md, *.html, renders/). Not live; nothing ships without Charlie's sign-off.
 Files: manga.css, title.html, dialogue.html, choice.html, dialogue_long.html (200-char stress test), renders/.
-Copy: exact from ../../../ui-copy.md (tagline = approved #2 "Before he rose, he had to fall."; choices = The Boulders A/B/C; prompt empty).
+Copy: exact from ../../../ui-copy.md (tagline: see below; choices = The Boulders A/B/C; prompt empty).
 
 ## Look (matches Mira's adult Azriel/Devon samples)
 Crisp ink: 3px solid #16151a borders (1.5px inner), hard 4–5px offset ink shadow (manga panel frame), square corners.
@@ -53,3 +53,7 @@ warning.html. Whole screen: copy pending Charlie's approval (Hope's copy as rela
 - Footer: quiet text link "Support resources" → help.html (left, 18px ink-soft underlined, no border/fill, 48px tall tap area) + primary "Continue" (right). Separate, non-overlapping hit areas; at 1280 they share one row, at 390 the link sits above Continue (wraps).
 - Nothing from the cut Telling Grandpa screen.
 - Checked: text ≥18px, targets ≥48px, both sizes.
+
+## Tagline + working title (update Nov 1, 00:06 MT)
+- **Tagline APPROVED (Charlie's pick, per Robert): "Some goodbyes aren't the end."** Straight apostrophe. Supersedes "Before he rose, he had to fall." Note: ui-copy.md (Sage's file) still lists the old tagline; not edited by me. Sage to update.
+- title_working.html uses the working title "Where the Lost Still Stand" (not final) + the new tagline in the maroon tape strip. Renders: renders/title_working_390x844.png, title_working_1280x720.png. title.html (old copy) kept as fallback.

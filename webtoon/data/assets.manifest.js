@@ -237,3 +237,6 @@ window.ASSET_FILES = {
  ],
  "styleMasterMtime": null
 };
+
+// webtoon build: Mira's manga character art (art/manga/characters)
+window.ASSET_FILES.manga_chars = ["azriel/child_expr_amazed.png", "azriel/child_expr_angry.png", "azriel/child_expr_huge_grin.png", "azriel/child_expr_laughing.png", "azriel/child_expr_sad.png", "azriel/child_expr_shocked.png", "azriel/child_expr_sleepy_happy.png", "azriel/child_expr_thinking.png", "azriel/child_expr_tired.png", "azriel/child_pose_pointing_grin.png", "uncle_fred/pose_arms_crossed.png", "uncle_fred/pose_waving.png"];
