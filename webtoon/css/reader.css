@@ -1,0 +1,30 @@
+/* Reader-only pieces Juno's skin does not define (art frame, temporary balloons/captions, episode headers). Loads after ui/webtoon/webtoon.css. */
+:root{--wt-fs:1;--wt-max:720px}
+.wt-episode{padding:48px 20px 28px;text-align:center}.wt-episode--minor{padding-top:36px}
+.wt-episode__num{margin:0;font:800 14px/1 var(--f-body);letter-spacing:.3em;text-transform:uppercase;color:var(--maroon)}
+.wt-episode__title{margin:10px 0 0;font:400 clamp(30px,8vw,48px)/1.05 var(--f-display)}
+.wt-art{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:#2a2733;border-top:var(--line) solid var(--ink);border-bottom:var(--line) solid var(--ink)}
+.wt-art img{opacity:0;transition:opacity .25s}.wt-art img.is-ready{opacity:1}
+.wt-art__bg,.wt-art__cg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wt-art__tint{position:absolute;inset:0;pointer-events:none}
+.wt-art__sprites{position:absolute;inset:6% 0 0;display:flex;justify-content:center;align-items:flex-end;gap:2%}
+.wt-sprite{max-width:48%;object-fit:contain;object-position:bottom}
+.wt-flashback .wt-art__bg,.wt-flashback .wt-art__cg,.wt-flashback .wt-sprite{filter:sepia(.55) saturate(.6) brightness(1.03) contrast(.95)}
+.wt-flashback::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 52%,rgba(60,35,15,.55) 100%),rgba(255,190,120,.08)}
+.wt-text{display:flex;flex-direction:column;gap:12px;padding:14px 16px 0}
+.wt-caption,.wt-balloon{font-size:calc(18px*var(--wt-fs));line-height:1.5;max-width:34em}
+.wt-caption{align-self:flex-start;padding:10px 14px;background:var(--paper-2);border:2px solid var(--ink);font-style:italic}
+.wt-balloon{align-self:flex-end;position:relative;padding:12px 16px 12px;background:#fff;border:var(--line) solid var(--ink);border-radius:22px}
+.wt-balloon__name{display:block;margin-bottom:2px;font:800 calc(14px*var(--wt-fs))/1.2 var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--maroon)}
+.wt-line{margin:0}.wt-line i{opacity:.7}
+.wt-echo{font-style:italic;opacity:.8;border-style:dashed}.wt-echo .wt-balloon__name{opacity:.5}
+.wt-panel--end,.wt-fin{padding:60px 20px;text-align:center;font:400 clamp(22px,6vw,32px)/1.2 var(--f-display)}
+.wt-menu__row{display:flex;align-items:center;gap:10px;font-weight:700}.wt-menu__row span{flex:1}
+.wt-menu__chapters{display:flex;flex-direction:column;gap:6px}
+.wt-menu__chapter{min-height:44px;text-align:left;padding:8px 12px;font:600 16px/1.2 var(--f-body);background:none;border:2px solid var(--ink);cursor:pointer}
+.wt-menu__chapter:disabled{opacity:.4}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.wt-panel{min-height:0;content-visibility:auto;contain-intrinsic-size:auto 900px}.wt-panel--end{border:0;background:none}
+.wt-art{border:0}.wt-panel .wt-art img{width:100%;height:100%}.wt-panel .wt-art .wt-sprite{width:auto}
+.wt-text{padding-bottom:16px}.wt-menu__row .btn{min-width:56px;justify-content:center}.wt-menu__chapters{display:flex;flex-direction:column;gap:8px}
+.wt-audio-toggle--menu{position:static;min-height:48px}

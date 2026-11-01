@@ -1,0 +1,6 @@
+/* Self-hosted fonts (SIL OFL 1.1, licences in ../fonts/OFL-*.txt). Latin subset from Google Fonts. No runtime CDN. */
+@font-face{font-family:"Zen Antique";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/ZenAntique-Regular.latin.woff2) format("woff2")}
+@font-face{font-family:"Shippori Mincho";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/ShipporiMincho-Regular.latin.woff2) format("woff2")}
+@font-face{font-family:"Shippori Mincho";font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/ShipporiMincho-Bold.latin.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:400 800;font-display:swap;src:url(../fonts/Nunito-Variable.latin.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:italic;font-weight:400 800;font-display:swap;src:url(../fonts/Nunito-Italic-Variable.latin.woff2) format("woff2")}

@@ -1,0 +1,41 @@
+/* Webtoon reader skin — TEST ONLY (Juno). Requires ../manga/manga.css (tokens, .btn, .panel). Hooks per Kai's contract. */
+:root{--wt-col:720px;--wt-gutter:12px;--wt-hold:100vh;--wt-bar:56px}
+html,body{background:var(--paper-2)}
+body{overflow-y:auto}
+.wt-topbar{position:fixed;top:0;left:0;right:0;z-index:20;height:var(--wt-bar);display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:4px 8px;background:var(--paper);border-bottom:var(--line) solid var(--ink);transition:transform 250ms ease}
+.wt-topbar.is-hidden{transform:translateY(-110%)}
+.wt-topbar__title{font:400 20px/1.1 var(--f-display);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wt-topbar .btn{min-height:48px;padding:6px 14px;font-size:18px;box-shadow:3px 3px 0 var(--ink)}
+.wt-reader{width:min(var(--wt-col),100%);margin:0 auto;padding:calc(var(--wt-bar) + 12px) 0 120px;display:flex;flex-direction:column;gap:var(--wt-gutter);background:var(--paper)}
+@media (min-width:760px){.wt-reader{border-left:var(--line) solid var(--ink);border-right:var(--line) solid var(--ink)}}
+.wt-panel{position:relative;margin:0 var(--wt-gutter);border:var(--line) solid var(--ink);background:var(--sky);min-height:300px;overflow:hidden}
+.wt-panel img{display:block;width:100%;height:auto}
+.wt-panel--tall{min-height:560px}.wt-panel--short{min-height:200px}
+.wt-panel--ph{background:linear-gradient(180deg,var(--sky) 0 55%,var(--olive) 55% 68%,var(--sand) 68%)}
+.wt-panel--ph::after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--tone) 1.1px,transparent 1.3px);background-size:6px 6px}
+.wt-ph-label{position:absolute;left:10px;top:10px;z-index:1;font:700 18px/1.3 var(--f-body);background:var(--paper);border:var(--line-thin) solid var(--ink);padding:4px 10px;max-width:calc(100% - 20px)}
+.wt-hold{height:var(--wt-hold)}                       /* Nova step 2: one-screen hold */
+.wt-choice{margin:0 var(--wt-gutter);border:var(--line) solid var(--ink);background:var(--paper);padding:0 0 16px}
+.wt-choice .wt-panel{margin:0;border:0;border-bottom:var(--line) solid var(--ink)}
+.wt-choice__options{display:flex;flex-direction:column;gap:14px;padding:16px 16px 0}
+.wt-choice-option{width:100%;min-height:56px;justify-content:flex-start;text-align:left;font-weight:600}
+.wt-choice-option::before{content:"▶";font-size:.7em;color:var(--maroon);margin-right:12px}
+.wt-choice.is-chosen .wt-choice-option{opacity:.45;box-shadow:none}
+.wt-choice.is-chosen .wt-choice-option[aria-pressed=true]{opacity:1;background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--maroon)}
+.wt-branch{display:flex;flex-direction:column;gap:var(--wt-gutter)}
+.wt-branch[hidden]{display:none}
+.wt-audio-toggle{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:30;
+  min-width:56px;min-height:56px;padding:6px 14px;font-size:18px;gap:6px}
+.wt-audio-toggle[aria-pressed=false]{background:var(--paper)}
+.wt-audio-toggle[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.wt-menu{position:fixed;inset:0;z-index:40;background:rgba(22,21,26,.55);display:flex;justify-content:flex-end}
+.wt-menu[hidden]{display:none}
+.wt-menu__sheet{width:min(360px,88vw);height:100%;background:var(--paper);border-left:var(--line) solid var(--ink);padding:16px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.wt-menu__sheet h2{font:400 32px/1 var(--f-display);margin:4px 0 6px}
+.wt-menu__sheet h3{font:800 18px/1.3 var(--f-body);margin:8px 0 0}
+.wt-menu .btn{justify-content:flex-start}
+@media (prefers-reduced-motion:reduce){.wt-topbar{transition:none}html{scroll-behavior:auto}}
+html.reduce-motion .wt-topbar{transition:none}
+/* keep the floating audio toggle from covering choice captions on phones */
+@media (max-width:759px){.wt-choice__options{padding-right:80px}}
